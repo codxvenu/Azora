@@ -1,0 +1,106 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user-specific data including wallet balance and security settings.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "walletBalance": { "type": "number", "description": "Current balance in USD" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "twoFactorEnabled": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "walletBalance", "role"]
+    },
+    "GiftCard": {
+      "title": "Gift Card Product",
+      "description": "Defines a gift card available for purchase.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "brand": { "type": "string" },
+        "category": { "type": "string" },
+        "realPrice": { "type": "number" },
+        "discount": { "type": "number" },
+        "finalPrice": { "type": "number" },
+        "description": { "type": "string" },
+        "image": { "type": "string", "format": "uri" },
+        "inventoryCount": { "type": "number" }
+      },
+      "required": ["brand", "realPrice", "finalPrice"]
+    },
+    "Order": {
+      "title": "Purchase Order",
+      "description": "Records of gift card purchases.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "giftCardId": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["completed", "refunded"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "deliveryEmail": { "type": "string", "format": "email" },
+        "codes": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["userId", "giftCardId", "amount", "status", "timestamp"]
+    },
+    "Submission": {
+      "title": "Seller Submission",
+      "description": "Codes submitted by users to be sold.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "fileName": { "type": "string" },
+        "fileSize": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "checked", "accepted"] },
+        "validPercentage": { "type": "number" },
+        "estimatedValue": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "codes": { "type": "string", "description": "Raw pasted codes or file content" }
+      },
+      "required": ["userId", "status", "timestamp"]
+    },
+    "Withdrawal": {
+      "title": "Withdrawal Request",
+      "description": "Requests to withdraw funds from wallet.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "method": { "type": "string", "enum": ["bank", "crypto"] },
+        "details": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "method", "status", "timestamp"]
+    },
+    "Transaction": {
+      "title": "Wallet Transaction",
+      "description": "History of all financial movements.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["deposit", "withdrawal", "purchase", "sale"] },
+        "status": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "type", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": "User", "description": "User profiles" },
+    "/giftCards/{cardId}": { "schema": "GiftCard", "description": "Gift card inventory" },
+    "/orders/{orderId}": { "schema": "Order", "description": "Purchase history" },
+    "/submissions/{submissionId}": { "schema": "Submission", "description": "Seller submissions" },
+    "/withdrawals/{withdrawalId}": { "schema": "Withdrawal", "description": "Withdrawal requests" },
+    "/transactions/{transactionId}": { "schema": "Transaction", "description": "Wallet transaction history" }
+  }
+}
