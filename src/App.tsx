@@ -92,7 +92,7 @@ const AppContent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBFBFB] text-zinc-900 font-sans selection:bg-black selection:text-white">
+    <div className="min-h-screen bg-[#FAF9F6] text-zinc-900 font-sans selection:bg-black selection:text-white">
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-zinc-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,14 +127,14 @@ const AppContent = () => {
                 <div className="flex items-center gap-4">
                   <button 
                     onClick={() => setCurrentView('wallet')}
-                    className="hidden sm:flex items-center gap-2 bg-zinc-50 hover:bg-zinc-100 px-4 py-2 rounded-full border border-zinc-200 transition-all group"
+                    className="hidden sm:flex items-center gap-2 bg-zinc-50 hover:bg-zinc-100 px-4 py-2 rounded-2xl border border-zinc-200 transition-all group"
                   >
                     <Wallet className="w-4 h-4 text-zinc-500 group-hover:text-black" />
                     <span className="font-bold text-sm">${profile?.walletBalance.toFixed(2)}</span>
                   </button>
                   
                   <div className="relative group">
-                    <button className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center border border-zinc-200 overflow-hidden">
+                    <button className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center border border-zinc-200 overflow-hidden">
                       {user.photoURL ? (
                         <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
@@ -155,7 +155,7 @@ const AppContent = () => {
               ) : (
                 <button 
                   onClick={login}
-                  className="bg-black text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-zinc-800 transition-all"
+                  className="bg-black text-white px-6 py-2 rounded-2xl font-bold text-sm hover:bg-zinc-800 transition-all"
                 >
                   Sign In
                 </button>
@@ -206,7 +206,7 @@ const AppContent = () => {
               className="space-y-12"
             >
               {/* Hero */}
-              <div className="bg-zinc-900 rounded-[3rem] p-8 sm:p-16 text-white relative overflow-hidden">
+              <div className="bg-zinc-900 rounded-[1.5rem] p-8 sm:p-16 text-white relative overflow-hidden">
                 <div className="relative z-10 max-w-2xl space-y-6">
                   <Badge className="bg-white/10 text-white border-white/20">Limited Time Offer</Badge>
                   <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tighter leading-none">
@@ -220,7 +220,7 @@ const AppContent = () => {
                       const el = document.getElementById('marketplace');
                       el?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform flex items-center gap-2"
+                    className="bg-white text-black px-8 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-transform flex items-center gap-2"
                   >
                     Shop Now <ArrowRight className="w-5 h-5" />
                   </button>
@@ -240,7 +240,7 @@ const AppContent = () => {
                     <motion.div 
                       initial={false}
                       animate={{ width: isSearchFocused || searchQuery ? (window.innerWidth < 640 ? '100%' : '320px') : '48px' }}
-                      className="relative h-12 bg-white border border-zinc-200 rounded-full overflow-hidden transition-all duration-300"
+                      className="relative h-12 bg-white border border-zinc-200 rounded-2xl overflow-hidden transition-all duration-300"
                     >
                       <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
                       <input 
@@ -258,7 +258,7 @@ const AppContent = () => {
                         <button
                           key={cat}
                           onClick={() => setSelectedCategory(cat)}
-                          className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${
+                          className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${
                             selectedCategory === cat 
                               ? 'bg-black text-white' 
                               : 'bg-white text-zinc-500 border border-zinc-200 hover:border-zinc-400'
@@ -284,22 +284,22 @@ const AppContent = () => {
 
                 {/* Why Choose Us */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-20">
-                  <div className="space-y-4 p-8 bg-white rounded-[2.5rem] border border-zinc-100">
-                    <div className="w-12 h-12 bg-zinc-900 text-white rounded-2xl flex items-center justify-center">
+                  <div className="space-y-4 p-8 bg-white rounded-[1.25rem] border border-zinc-100">
+                    <div className="w-12 h-12 bg-zinc-900 text-white rounded-xl flex items-center justify-center">
                       <ShieldCheck className="w-6 h-6" />
                     </div>
                     <h3 className="text-xl font-bold">Secure Escrow</h3>
                     <p className="text-zinc-500 text-sm leading-relaxed">Your funds are held in secure escrow until you verify the gift card code. 100% protection guaranteed.</p>
                   </div>
-                  <div className="space-y-4 p-8 bg-white rounded-[2.5rem] border border-zinc-100">
-                    <div className="w-12 h-12 bg-zinc-900 text-white rounded-2xl flex items-center justify-center">
+                  <div className="space-y-4 p-8 bg-white rounded-[1.25rem] border border-zinc-100">
+                    <div className="w-12 h-12 bg-zinc-900 text-white rounded-xl flex items-center justify-center">
                       <Plus className="w-6 h-6" />
                     </div>
                     <h3 className="text-xl font-bold">Instant Delivery</h3>
                     <p className="text-zinc-500 text-sm leading-relaxed">No waiting. Get your codes delivered to your dashboard and email the second your payment is confirmed.</p>
                   </div>
-                  <div className="space-y-4 p-8 bg-white rounded-[2.5rem] border border-zinc-100">
-                    <div className="w-12 h-12 bg-zinc-900 text-white rounded-2xl flex items-center justify-center">
+                  <div className="space-y-4 p-8 bg-white rounded-[1.25rem] border border-zinc-100">
+                    <div className="w-12 h-12 bg-zinc-900 text-white rounded-xl flex items-center justify-center">
                       <History className="w-6 h-6" />
                     </div>
                     <h3 className="text-xl font-bold">24/7 Support</h3>
@@ -504,9 +504,9 @@ const GiftCardItem = ({ card, onClick }: { card: GiftCard, onClick: () => void }
   <motion.div 
     whileHover={{ y: -5 }}
     onClick={onClick}
-    className="bg-white rounded-3xl border border-zinc-100 p-3 sm:p-5 space-y-3 sm:space-y-4 hover:shadow-2xl hover:shadow-zinc-200/50 transition-all group cursor-pointer"
+    className="bg-white rounded-xl border border-zinc-100 p-3 sm:p-5 space-y-3 sm:space-y-4 hover:shadow-2xl hover:shadow-zinc-200/50 transition-all group cursor-pointer"
   >
-    <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-50 relative">
+    <div className="aspect-[4/3] rounded-lg overflow-hidden bg-zinc-50 relative">
       <img src={card.image} alt={card.brand} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
       {card.discount > 0 && (
         <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-red-500 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg">
@@ -547,14 +547,14 @@ const ProductDetailView = ({ card, onClose, onBuy }: { card: GiftCard, onClose: 
       animate={{ y: 0 }}
       exit={{ y: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="relative w-full max-w-2xl bg-white rounded-t-[3rem] p-8 sm:p-12 space-y-8 shadow-2xl"
+      className="relative w-full max-w-2xl bg-white rounded-t-[1.5rem] p-8 sm:p-12 space-y-8 shadow-2xl"
     >
-      <button onClick={onClose} className="absolute top-6 right-8 w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center hover:bg-zinc-200 transition-colors">
+      <button onClick={onClose} className="absolute top-6 right-8 w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center hover:bg-zinc-200 transition-colors">
         <X className="w-5 h-5" />
       </button>
 
       <div className="flex flex-col sm:flex-row gap-8">
-        <div className="w-full sm:w-1/2 aspect-[4/3] rounded-3xl overflow-hidden bg-zinc-50">
+        <div className="w-full sm:w-1/2 aspect-[4/3] rounded-xl overflow-hidden bg-zinc-50">
           <img src={card.image} alt={card.brand} className="w-full h-full object-cover" />
         </div>
         <div className="flex-1 space-y-6">
@@ -581,11 +581,11 @@ const ProductDetailView = ({ card, onClose, onBuy }: { card: GiftCard, onClose: 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button 
           onClick={onBuy}
-          className="bg-black text-white py-5 rounded-[2rem] font-bold text-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+          className="bg-black text-white py-5 rounded-[1rem] font-bold text-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
         >
           Buy Now <ArrowRight className="w-6 h-6" />
         </button>
-        <button className="bg-zinc-100 text-black py-5 rounded-[2rem] font-bold text-xl hover:bg-zinc-200 transition-all">
+        <button className="bg-zinc-100 text-black py-5 rounded-[1rem] font-bold text-xl hover:bg-zinc-200 transition-all">
           Add to Cart
         </button>
       </div>
@@ -610,7 +610,7 @@ const DepositModal = ({ onClose, onSuccess }: { onClose: () => void, onSuccess: 
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="relative w-full max-w-lg bg-white rounded-[3rem] p-8 sm:p-12 space-y-8 shadow-2xl"
+        className="relative w-full max-w-lg bg-white rounded-[1.5rem] p-8 sm:p-12 space-y-8 shadow-2xl"
       >
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-display font-black tracking-tighter">DEPOSIT FUNDS</h2>
@@ -625,7 +625,7 @@ const DepositModal = ({ onClose, onSuccess }: { onClose: () => void, onSuccess: 
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.00"
-              className="w-full p-6 rounded-3xl bg-zinc-50 border border-zinc-200 focus:ring-2 focus:ring-black outline-none transition-all font-display font-black text-3xl text-center"
+              className="w-full p-6 rounded-2xl bg-zinc-50 border border-zinc-200 focus:ring-2 focus:ring-black outline-none transition-all font-display font-black text-3xl text-center"
             />
           </div>
 
@@ -638,7 +638,7 @@ const DepositModal = ({ onClose, onSuccess }: { onClose: () => void, onSuccess: 
               <button
                 key={m.id}
                 onClick={() => setMethod(m.id as any)}
-                className={`p-5 rounded-2xl border flex items-center justify-between transition-all ${
+                className={`p-5 rounded-xl border flex items-center justify-between transition-all ${
                   method === m.id ? 'border-black bg-black text-white' : 'border-zinc-100 bg-zinc-50 hover:border-zinc-300'
                 }`}
               >
@@ -658,7 +658,7 @@ const DepositModal = ({ onClose, onSuccess }: { onClose: () => void, onSuccess: 
             onSuccess(Number(amount));
           }}
           disabled={!amount || !method}
-          className="w-full bg-black text-white py-5 rounded-[2rem] font-bold text-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+          className="w-full bg-black text-white py-5 rounded-[1rem] font-bold text-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
         >
           Proceed to Payment
         </button>
@@ -703,24 +703,24 @@ const SellView = ({ onBack }: { onBack: () => void }) => {
         <p className="text-zinc-500">Turn your unused gift cards into instant cash.</p>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] p-8 sm:p-12 border border-zinc-100 space-y-8 shadow-xl shadow-zinc-100">
+      <div className="bg-white rounded-[1.25rem] p-8 sm:p-12 border border-zinc-100 space-y-8 shadow-xl shadow-zinc-100">
         <div className="space-y-4">
           <label className="text-xs font-bold uppercase tracking-widest text-zinc-400">Paste your codes here</label>
           <textarea 
             value={codes}
             onChange={(e) => setCodes(e.target.value)}
             placeholder="Enter one code per line..."
-            className="w-full h-64 p-6 rounded-3xl bg-zinc-50 border border-zinc-200 focus:ring-2 focus:ring-black outline-none transition-all font-mono text-sm"
+            className="w-full h-64 p-6 rounded-2xl bg-zinc-50 border border-zinc-200 focus:ring-2 focus:ring-black outline-none transition-all font-mono text-sm"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="p-6 rounded-3xl bg-zinc-50 border border-zinc-100 space-y-2">
+          <div className="p-6 rounded-2xl bg-zinc-50 border border-zinc-100 space-y-2">
             <Upload className="w-6 h-6 text-zinc-400" />
             <p className="font-bold text-sm">Bulk Upload</p>
             <p className="text-xs text-zinc-500">Support for .txt, .csv, .json</p>
           </div>
-          <div className="p-6 rounded-3xl bg-zinc-50 border border-zinc-100 space-y-2">
+          <div className="p-6 rounded-2xl bg-zinc-50 border border-zinc-100 space-y-2">
             <ShieldCheck className="w-6 h-6 text-zinc-400" />
             <p className="font-bold text-sm">Secure Verification</p>
             <p className="text-xs text-zinc-500">Codes are encrypted instantly</p>
@@ -730,7 +730,7 @@ const SellView = ({ onBack }: { onBack: () => void }) => {
         <button 
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full bg-black text-white py-5 rounded-[2rem] font-bold text-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+          className="w-full bg-black text-white py-5 rounded-[1rem] font-bold text-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
         >
           {isSubmitting ? 'Submitting...' : 'Submit for Review'}
         </button>
@@ -761,17 +761,17 @@ const WalletView = ({ profile, onBack, onDeposit }: { profile: any, onBack: () =
           <p className="text-zinc-500">Manage your funds and transactions.</p>
         </div>
         <div className="flex gap-4 w-full sm:w-auto">
-          <button onClick={onDeposit} className="flex-1 sm:flex-none bg-black text-white px-8 py-3 rounded-full font-bold text-sm flex items-center justify-center gap-2">
+          <button onClick={onDeposit} className="flex-1 sm:flex-none bg-black text-white px-8 py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2">
             <Plus className="w-4 h-4" /> Deposit
           </button>
-          <button className="flex-1 sm:flex-none bg-white border border-zinc-200 px-8 py-3 rounded-full font-bold text-sm flex items-center justify-center gap-2">
+          <button className="flex-1 sm:flex-none bg-white border border-zinc-200 px-8 py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2">
             Withdraw
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-1 bg-black text-white p-8 rounded-[2.5rem] space-y-6 shadow-2xl shadow-black/20">
+        <div className="md:col-span-1 bg-black text-white p-8 rounded-[1.25rem] space-y-6 shadow-2xl shadow-black/20">
           <p className="text-xs font-bold uppercase tracking-widest opacity-50">Available Balance</p>
           <p className="text-5xl font-display font-black tracking-tighter">${profile?.walletBalance.toFixed(2)}</p>
           <div className="pt-6 border-t border-white/10 space-y-4">
@@ -786,7 +786,7 @@ const WalletView = ({ profile, onBack, onDeposit }: { profile: any, onBack: () =
           </div>
         </div>
 
-        <div className="md:col-span-2 bg-white rounded-[2.5rem] border border-zinc-100 p-8 space-y-6">
+        <div className="md:col-span-2 bg-white rounded-[1.25rem] border border-zinc-100 p-8 space-y-6">
           <h3 className="font-bold text-lg flex items-center gap-2">
             <History className="w-5 h-5" /> Transaction History
           </h3>
@@ -794,7 +794,7 @@ const WalletView = ({ profile, onBack, onDeposit }: { profile: any, onBack: () =
             {transactions.map(tx => (
               <div key={tx.id} className="flex items-center justify-between py-4 border-b border-zinc-50 last:border-0">
                 <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                     tx.type === 'deposit' ? 'bg-green-50 text-green-600' : 
                     tx.type === 'purchase' ? 'bg-red-50 text-red-600' : 'bg-zinc-50 text-zinc-600'
                   }`}>
@@ -840,15 +840,15 @@ const OrdersView = ({ onBack }: { onBack: () => void }) => {
 
       <div className="grid grid-cols-1 gap-6">
         {orders.map(order => (
-          <div key={order.id} className="bg-white rounded-3xl border border-zinc-100 p-6 flex flex-col sm:flex-row items-center gap-8">
-            <div className="w-32 h-20 rounded-xl overflow-hidden bg-zinc-50 shrink-0">
+          <div key={order.id} className="bg-white rounded-2xl border border-zinc-100 p-6 flex flex-col sm:flex-row items-center gap-8">
+            <div className="w-32 h-20 rounded-lg overflow-hidden bg-zinc-50 shrink-0">
               <img src={order.productImage || 'https://picsum.photos/seed/card/200/120'} alt="Card" className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 space-y-1 text-center sm:text-left">
               <h3 className="font-bold text-lg">{order.productName}</h3>
               <p className="text-xs text-zinc-400 font-medium uppercase tracking-widest">{format(new Date(order.timestamp), 'MMMM dd, yyyy')}</p>
             </div>
-            <div className="bg-zinc-50 px-6 py-4 rounded-2xl border border-zinc-100 flex items-center gap-4">
+            <div className="bg-zinc-50 px-6 py-4 rounded-xl border border-zinc-100 flex items-center gap-4">
               <code className="font-mono font-bold text-lg tracking-widest">{order.codes[0]}</code>
               <button className="text-zinc-400 hover:text-black transition-colors">
                 <History className="w-4 h-4" />
@@ -971,7 +971,7 @@ const AdminPanel = ({ onBack }: { onBack: () => void }) => {
           >
             Seed Demo Data
           </button>
-          <div className="flex gap-2 bg-zinc-100 p-1 rounded-full">
+          <div className="flex gap-2 bg-zinc-100 p-1 rounded-xl">
             <TabButton active={activeTab === 'submissions'} onClick={() => setActiveTab('submissions')}>Submissions</TabButton>
             <TabButton active={activeTab === 'inventory'} onClick={() => setActiveTab('inventory')}>Inventory</TabButton>
             <TabButton active={activeTab === 'orders'} onClick={() => setActiveTab('orders')}>Orders</TabButton>
@@ -980,7 +980,7 @@ const AdminPanel = ({ onBack }: { onBack: () => void }) => {
       </div>
 
       {activeTab === 'submissions' && (
-        <div className="bg-white rounded-[2.5rem] border border-zinc-100 overflow-hidden shadow-xl shadow-zinc-100">
+        <div className="bg-white rounded-[1.25rem] border border-zinc-100 overflow-hidden shadow-xl shadow-zinc-100">
           <table className="w-full text-left">
             <thead className="bg-zinc-50 border-b border-zinc-100">
               <tr>
@@ -1025,7 +1025,7 @@ const AdminPanel = ({ onBack }: { onBack: () => void }) => {
 
       {activeTab === 'inventory' && (
         <div className="space-y-6">
-          <button onClick={handleAddCard} className="bg-black text-white px-8 py-4 rounded-full font-bold text-sm flex items-center gap-2">
+          <button onClick={handleAddCard} className="bg-black text-white px-8 py-4 rounded-xl font-bold text-sm flex items-center gap-2">
             <Plus className="w-4 h-4" /> Add New Gift Card
           </button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1041,7 +1041,7 @@ const AdminPanel = ({ onBack }: { onBack: () => void }) => {
 const TabButton = ({ children, active, onClick }: { children: React.ReactNode, active: boolean, onClick: () => void }) => (
   <button 
     onClick={onClick}
-    className={`px-6 py-2 rounded-full text-xs font-bold transition-all ${active ? 'bg-white text-black shadow-sm' : 'text-zinc-400 hover:text-zinc-600'}`}
+    className={`px-6 py-2 rounded-xl text-xs font-bold transition-all ${active ? 'bg-white text-black shadow-sm' : 'text-zinc-400 hover:text-zinc-600'}`}
   >
     {children}
   </button>
@@ -1051,15 +1051,15 @@ const ProfileView = ({ profile, onBack }: { profile: any, onBack: () => void }) 
   return (
     <div className="max-w-2xl mx-auto space-y-12">
       <div className="text-center space-y-4">
-        <div className="w-24 h-24 bg-zinc-100 rounded-full mx-auto flex items-center justify-center border-4 border-white shadow-xl">
+        <div className="w-24 h-24 bg-zinc-100 rounded-3xl mx-auto flex items-center justify-center border-4 border-white shadow-xl">
           <UserIcon className="w-10 h-10 text-zinc-400" />
         </div>
         <h2 className="text-4xl font-display font-black tracking-tighter">{profile?.displayName}</h2>
         <p className="text-zinc-500">{profile?.email}</p>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-zinc-100 p-8 space-y-8 shadow-xl shadow-zinc-100">
-        <div className="flex items-center justify-between p-6 bg-zinc-50 rounded-3xl border border-zinc-100">
+      <div className="bg-white rounded-[1.25rem] border border-zinc-100 p-8 space-y-8 shadow-xl shadow-zinc-100">
+        <div className="flex items-center justify-between p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
           <div className="flex items-center gap-4">
             <ShieldCheck className="w-6 h-6 text-zinc-400" />
             <div>
@@ -1067,7 +1067,7 @@ const ProfileView = ({ profile, onBack }: { profile: any, onBack: () => void }) 
               <p className="text-xs text-zinc-500">Secure your account with 2FA</p>
             </div>
           </div>
-          <button className={`px-4 py-2 rounded-full text-xs font-bold ${profile?.twoFactorEnabled ? 'bg-green-100 text-green-600' : 'bg-black text-white'}`}>
+          <button className={`px-4 py-2 rounded-xl text-xs font-bold ${profile?.twoFactorEnabled ? 'bg-green-100 text-green-600' : 'bg-black text-white'}`}>
             {profile?.twoFactorEnabled ? 'Enabled' : 'Enable'}
           </button>
         </div>
@@ -1086,7 +1086,7 @@ const ProfileView = ({ profile, onBack }: { profile: any, onBack: () => void }) 
 };
 
 const DetailItem = ({ label, value }: { label: string, value: string }) => (
-  <div className="flex justify-between items-center p-4 hover:bg-zinc-50 rounded-2xl transition-colors">
+  <div className="flex justify-between items-center p-4 hover:bg-zinc-50 rounded-xl transition-colors">
     <span className="text-sm text-zinc-500 font-medium">{label}</span>
     <span className="text-sm font-bold capitalize">{value}</span>
   </div>
