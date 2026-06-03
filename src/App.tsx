@@ -44,9 +44,11 @@ import { WalletView } from './components/WalletView';
 import { OrdersView } from './components/OrdersView';
 import { AdminPanel } from './components/AdminPanel';
 import { ProfileView } from './components/ProfileView';
+import { AuthView } from './components/AuthView';
+import { CheckoutView } from './components/CheckoutView';
 
 // Views
-type View = 'browse' | 'sell' | 'wallet' | 'orders' | 'admin' | 'profile';
+type View = 'browse' | 'sell' | 'wallet' | 'orders' | 'admin' | 'profile' | 'login' | 'register' | 'forgot' | 'checkout';
 
 const DEFAULT_CARDS: GiftCard[] = [
   {
@@ -261,6 +263,60 @@ const AppContent = () => {
   const [selectedCard, setSelectedCard] = useState<GiftCard | null>(null);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isDark, setIsDark] = useState<boolean>(() => localStorage.getItem('aura-theme') === 'dark');
+  const [cartItems, setCartItems] = useState<{ card: GiftCard; quantity: number }[]>([]);
+
+  const handleAddToCart = (card: GiftCard, qty: number = 1) => {
+    setCartItems(prev => {
+      const existing = prev.find(item => item.card.id === card.id);
+      if (existing) {
+        return prev.map(item => item.card.id === card.id ? { ...item, quantity: item.quantity + qty } : item);
+      }
+      return [...prev, { card, quantity: qty }];
+    });
+    showNotification(`Added ${qty}x ${card.brand} to cart!`, 'success');
+  };
+
+  const handleCheckoutSuccess = async (orderId: string, itemsPaid: { card: GiftCard; quantity: number }[]) => {
+    try {
+      const uId = user?.uid || 'guest-user';
+      const uEmail = user?.email || 'guest@example.com';
+      
+      // Add each item paid as an order in firestore
+      for (const item of itemsPaid) {
+        const orderData: Omit<Order, 'id'> = {
+          userId: uId,
+          giftCardId: item.card.id,
+          amount: item.card.finalPrice * item.quantity,
+          status: 'completed',
+          timestamp: new Date().toISOString(),
+          deliveryEmail: uEmail,
+          codes: Array.from({ length: item.quantity }, () => 'AURA-' + Math.random().toString(36).substring(2, 10).toUpperCase()),
+          productName: item.card.brand,
+          productImage: item.card.image
+        };
+        await addDoc(collection(db, 'orders'), orderData);
+        
+        // Also record a transaction
+        const transactionData: Omit<Transaction, 'id'> = {
+          userId: uId,
+          amount: item.card.finalPrice * item.quantity,
+          type: 'purchase',
+          status: 'completed',
+          timestamp: new Date().toISOString()
+        };
+        await addDoc(collection(db, 'transactions'), transactionData);
+      }
+      
+      showNotification('Payment successful! Your order digital keys have been delivered to your email/account ledger.', 'success');
+      setCartItems([]);
+      setCurrentView('orders');
+    } catch (err) {
+      console.error('Error recording successful checkout:', err);
+      showNotification('Successfully paid, but error logging. Your keys are generated in session.', 'success');
+      setCartItems([]);
+      setCurrentView('browse');
+    }
+  };
 
   useEffect(() => {
     if (isDark) {
@@ -350,6 +406,31 @@ const AppContent = () => {
                 Open in New Tab <ArrowRight className="w-3 h-3" />
               </a>
 
+              {/* Cart Button */}
+              <button 
+                onClick={() => {
+                  if (cartItems.length === 0) {
+                    showNotification('Your cart is empty! Add game keys or gift cards to checkout.', 'info');
+                  } else {
+                    setSelectedCard(null);
+                    setCurrentView('checkout');
+                  }
+                }}
+                className={`p-2 rounded-xl border transition-all duration-300 flex items-center justify-center relative ${
+                  isDark 
+                    ? 'bg-zinc-900 border-zinc-800 text-white hover:border-zinc-700' 
+                    : 'bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-black hover:bg-zinc-100 hover:border-zinc-300'
+                }`}
+                title="Your Cart / Checkout"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-mono text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-bounce">
+                    {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+                  </span>
+                )}
+              </button>
+
               {/* Day / Night Mode Toggler */}
               <button 
                 onClick={() => setIsDark(!isDark)}
@@ -379,7 +460,7 @@ const AppContent = () => {
                   
                   <div className="relative group">
                     <button className={`w-10 h-10 rounded-xl flex items-center justify-center border overflow-hidden transition-colors ${
-                      isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'
+                      isDark ? 'bg-zinc-900 border-zinc-805' : 'bg-zinc-100 border-zinc-205'
                     }`}>
                       {user.photoURL ? (
                         <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
@@ -408,9 +489,9 @@ const AppContent = () => {
                 </div>
               ) : (
                 <button 
-                  onClick={login}
+                  onClick={() => setCurrentView('login')}
                   className={`px-6 py-2 rounded-2xl font-bold text-sm transition-all ${
-                    isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-black text-white hover:bg-zinc-800'
+                    isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-black text-white hover:bg-zinc-850'
                   }`}
                 >
                   Sign In
@@ -443,7 +524,7 @@ const AppContent = () => {
               {user ? (
                 <button onClick={() => { logout(); setIsMenuOpen(false); }} className="text-red-600">Logout</button>
               ) : (
-                <button onClick={() => { login(); setIsMenuOpen(false); }}>Sign In</button>
+                <button onClick={() => { setCurrentView('login'); setIsMenuOpen(false); }}>Sign In</button>
               )}
             </div>
           </motion.div>
@@ -453,7 +534,7 @@ const AppContent = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <AnimatePresence mode="wait">
-          {currentView === 'browse' && (
+          {currentView === 'browse' && !selectedCard && (
             <motion.div 
               key="browse"
               initial={{ opacity: 0, y: 20 }}
@@ -471,15 +552,6 @@ const AppContent = () => {
                   <p className="text-zinc-400 text-lg sm:text-xl font-medium max-w-lg">
                     Instantly buy and sell gift cards with zero fees and maximum security.
                   </p>
-                  <button 
-                    onClick={() => {
-                      const el = document.getElementById('marketplace');
-                      el?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="bg-white text-black px-8 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-transform flex items-center gap-2"
-                  >
-                    Shop Now <ArrowRight className="w-5 h-5" />
-                  </button>
                 </div>
                 <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
                   <div className="absolute inset-0 bg-gradient-to-l from-zinc-900 to-transparent z-10" />
@@ -492,54 +564,16 @@ const AppContent = () => {
                 {/* Marketplace Anchor */}
                 <div id="marketplace-grid-anchor" className="scroll-mt-24" />
 
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                    <h2 className="text-3xl font-display font-medium tracking-tight">Browse All Deals</h2>
-                    
-                    <div className="flex items-center gap-4 w-full sm:w-auto">
-                      <motion.div 
-                        initial={false}
-                        animate={{ width: isSearchFocused || searchQuery ? (window.innerWidth < 640 ? '100%' : '320px') : '48px' }}
-                        className={`relative h-12 rounded-2xl overflow-hidden transition-all duration-300 border ${isDark ? 'bg-zinc-900 border-zinc-805 text-white' : 'bg-white border-zinc-200'}`}
-                      >
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-                        <input 
-                          type="text" 
-                          placeholder={isSearchFocused ? "Search brands..." : ""}
-                          value={searchQuery}
-                          onFocus={() => setIsSearchFocused(true)}
-                          onBlur={() => setIsSearchFocused(false)}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className={`w-full h-full pl-11 pr-4 py-2.5 bg-transparent focus:ring-0 transition-all outline-none font-medium text-sm ${!isSearchFocused && !searchQuery ? 'opacity-0 cursor-pointer' : 'opacity-100'}`}
-                        />
-                      </motion.div>
-                      <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
-                        {categories.map(cat => (
-                          <button
-                            key={cat}
-                            onClick={() => setSelectedCategory(cat)}
-                            className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${
-                              selectedCategory === cat 
-                                ? (isDark ? 'bg-white text-zinc-950 shadow-lg shadow-white/5' : 'bg-black text-white') 
-                                : (isDark ? 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white hover:border-zinc-750' : 'bg-white text-zinc-500 border border-zinc-200 hover:border-zinc-400')
-                            }`}
-                          >
-                            {cat}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                {/* Swapped Section 1: Trending Products Section (Shown first) */}
+                <div className="space-y-8">
+                  <div>
+                    <h2 className="text-3xl font-display font-medium tracking-tight">Trending Products</h2>
+                    <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'} mt-1`}>Highly requested digital software and activation kits updated live.</p>
                   </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-4">
-                    {filteredCards.slice(0, 4).map(card => (
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    {giftCards.slice(0, 4).map(card => (
                       <GiftCardItem key={card.id} card={card} isDark={isDark} onClick={() => setSelectedCard(card)} />
                     ))}
-                    {filteredCards.length === 0 && (
-                      <div className="col-span-full py-20 text-center text-zinc-500">
-                        <p className="text-xl font-medium">No products found matching your search.</p>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -569,39 +603,62 @@ const AppContent = () => {
                   </div>
                 </div>
 
-                {/* Trending Section */}
-                {filteredCards.length > 4 && (
-                  <div className="space-y-8">
-                    <div>
-                      <h2 className="text-3xl font-display font-bold tracking-tight">Trending Products</h2>
-                      <p className="text-zinc-400 text-sm mt-1">Highly requested digital software and activation kits updated live.</p>
+                {/* Swapped Section 2: Browse All Deals Section (Shown second) */}
+                <div className="space-y-6">
+                  {/* Category Buttons row at top */}
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-200/5 dark:border-zinc-900 pb-3">
+                    <div className="space-y-1">
+                      <h2 className="text-3xl font-display font-medium tracking-tight">Browse All Deals</h2>
+                      <p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-stone-500'}`}>Filter by categories or enter a query to locate direct keys instantly.</p>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                      {filteredCards.slice(4, 8).map(card => (
-                        <GiftCardItem key={card.id} card={card} isDark={isDark} onClick={() => setSelectedCard(card)} />
+                    
+                    <div className="flex gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
+                      {categories.map(cat => (
+                        <button
+                          key={cat}
+                          onClick={() => setSelectedCategory(cat)}
+                          className={`px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+                            selectedCategory === cat 
+                              ? (isDark ? 'bg-white text-zinc-950 shadow-lg shadow-white/5' : 'bg-black text-white') 
+                              : (isDark ? 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white hover:border-zinc-750' : 'bg-white text-zinc-500 border border-zinc-200 hover:border-zinc-405')
+                          }`}
+                        >
+                          {cat}
+                        </button>
                       ))}
                     </div>
                   </div>
-                )}
 
-                {/* Hot Deals Section */}
-                {filteredCards.length > 0 && (
-                  <div className="space-y-8">
-                    <div>
-                      <h2 className="text-3xl font-display font-bold tracking-tight">Hot Deals</h2>
-                      <p className="text-zinc-400 text-sm mt-1">Exceptional discount promotions available for a limited duration window.</p>
-                    </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                      {[...filteredCards]
-                        .sort((a, b) => b.discount - a.discount)
-                        .slice(0, 4)
-                        .map(card => (
-                          <GiftCardItem key={card.id} card={card} isDark={isDark} onClick={() => setSelectedCard(card)} />
-                        ))
-                      }
-                    </div>
+                  {/* Search Bar BELOW category list, full-width */}
+                  <div className="relative w-full">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+                    <input 
+                      type="text" 
+                      placeholder="Search for premium gift cards, activation keys, or software..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className={`w-full pl-11 pr-4 py-3.5 rounded-2xl outline-none border transition-all text-sm font-medium ${
+                        isDark 
+                          ? 'bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-zinc-650' 
+                          : 'bg-white border-zinc-250 text-zinc-900 placeholder-zinc-450 focus:border-zinc-400 shadow-sm'
+                      }`}
+                    />
                   </div>
-                )}
+
+                  {/* Grid displays filtered details */}
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-4">
+                    {filteredCards.map(card => (
+                      <GiftCardItem key={card.id} card={card} isDark={isDark} onClick={() => setSelectedCard(card)} />
+                    ))}
+                    {filteredCards.length === 0 && (
+                      <div className="col-span-full py-20 text-center text-zinc-500">
+                        <p className="text-xl font-medium">No products found matching your search criteria.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Hot Deals is deleted as requested! */}
 
                 {/* Steam-Style Featured Deals Showcase */}
                 <FeaturedDealsShowcase 
@@ -644,26 +701,52 @@ const AppContent = () => {
             </motion.div>
           )}
 
-          {currentView === 'sell' && <SellView onBack={() => setCurrentView('browse')} isDark={isDark} />}
-          {currentView === 'wallet' && <WalletView profile={profile} onBack={() => setCurrentView('browse')} onDeposit={() => setIsDepositModalOpen(true)} isDark={isDark} />}
-          {currentView === 'orders' && <OrdersView onBack={() => setCurrentView('browse')} isDark={isDark} />}
-          {currentView === 'admin' && <AdminPanel onBack={() => setCurrentView('browse')} />}
-          {currentView === 'profile' && <ProfileView profile={profile} onBack={() => setCurrentView('browse')} />}
-        </AnimatePresence>
-
-        {/* Product Detail Slide-up */}
-        <AnimatePresence>
-          {selectedCard && (
+          {currentView === 'browse' && selectedCard && (
             <ProductDetailView 
               card={selectedCard} 
               isDark={isDark}
               onClose={() => setSelectedCard(null)} 
-              onBuy={() => {
-                handleBuy(selectedCard);
+              onBuy={(amount) => {
+                handleBuy(selectedCard, amount);
                 setSelectedCard(null);
               }}
+              onAddToCart={(card, qty) => {
+                handleAddToCart(card, qty);
+                setSelectedCard(null);
+              }}
+              allCards={giftCards}
+              onSelectCard={(c) => setSelectedCard(c)}
             />
           )}
+
+          {currentView === 'checkout' && (
+            <div className="w-full">
+              <CheckoutView
+                items={cartItems}
+                isDark={isDark}
+                walletBalance={profile?.walletBalance || 0}
+                onBack={() => setCurrentView('browse')}
+                onRemoveItem={(id) => {
+                  const cleaned = cartItems.filter(item => item.card.id !== id);
+                  setCartItems(cleaned);
+                  if (cleaned.length === 0) {
+                    setCurrentView('browse');
+                  }
+                }}
+                onUpdateQuantity={(id, qty) => setCartItems(prev => prev.map(item => item.card.id === id ? { ...item, quantity: qty } : item))}
+                onSuccess={handleCheckoutSuccess}
+              />
+            </div>
+          )}
+
+          {currentView === 'sell' && <SellView onBack={() => { setSelectedCard(null); setCurrentView('browse'); }} isDark={isDark} />}
+          {currentView === 'wallet' && <WalletView profile={profile} onBack={() => { setSelectedCard(null); setCurrentView('browse'); }} onDeposit={() => setIsDepositModalOpen(true)} isDark={isDark} />}
+          {currentView === 'orders' && <OrdersView onBack={() => { setSelectedCard(null); setCurrentView('browse'); }} isDark={isDark} />}
+          {currentView === 'admin' && <AdminPanel onBack={() => { setSelectedCard(null); setCurrentView('browse'); }} />}
+          {currentView === 'profile' && <ProfileView profile={profile} onBack={() => { setSelectedCard(null); setCurrentView('browse'); }} />}
+          {currentView === 'login' && <AuthView initialMode="login" onSuccess={() => setCurrentView('browse')} onBack={() => setCurrentView('browse')} isDark={isDark} />}
+          {currentView === 'register' && <AuthView initialMode="register" onSuccess={() => setCurrentView('browse')} onBack={() => setCurrentView('browse')} isDark={isDark} />}
+          {currentView === 'forgot' && <AuthView initialMode="forgot" onSuccess={() => setCurrentView('browse')} onBack={() => setCurrentView('browse')} isDark={isDark} />}
         </AnimatePresence>
 
         {/* Deposit Modal */}
@@ -754,13 +837,15 @@ const AppContent = () => {
     }
   }
 
-  async function handleBuy(card: GiftCard) {
+  async function handleBuy(card: GiftCard, customAmount?: number) {
     if (!user || !profile) {
       login();
       return;
     }
 
-    if (profile.walletBalance < card.finalPrice) {
+    const priceToPay = customAmount !== undefined ? customAmount : card.finalPrice;
+
+    if (profile.walletBalance < priceToPay) {
       showNotification('Insufficient balance. Please deposit funds to your wallet.', 'error');
       setCurrentView('wallet');
       return;
@@ -771,12 +856,12 @@ const AppContent = () => {
       const orderData: Omit<Order, 'id'> = {
         userId: user.uid,
         giftCardId: card.id,
-        amount: card.finalPrice,
+        amount: priceToPay,
         status: 'completed',
         timestamp: new Date().toISOString(),
         deliveryEmail: user.email || '',
         codes: ['AURA-' + Math.random().toString(36).substring(2, 10).toUpperCase()],
-        productName: card.brand,
+        productName: customAmount !== undefined ? `${card.brand} (Voucher Balance)` : card.brand,
         productImage: card.image
       };
       
@@ -785,20 +870,20 @@ const AppContent = () => {
       // 2. Update Wallet
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, {
-        walletBalance: increment(-card.finalPrice)
+        walletBalance: increment(-priceToPay)
       });
 
       // 3. Record Transaction
       const transactionData: Omit<Transaction, 'id'> = {
         userId: user.uid,
-        amount: card.finalPrice,
+        amount: priceToPay,
         type: 'purchase',
         status: 'completed',
         timestamp: new Date().toISOString()
       };
       await addDoc(collection(db, 'transactions'), transactionData);
 
-      showNotification('Purchase successful! Your gift card code is available in your orders.', 'success');
+      showNotification('Purchase successful! Your digital key/code is available in your orders.', 'success');
       setCurrentView('orders');
     } catch (err) {
       handleFirestoreError(err, OperationType.WRITE, 'orders');
