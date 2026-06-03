@@ -152,7 +152,7 @@ export const SellView = ({ onBack, isDark }: SellViewProps) => {
           <Sparkles className="w-3.5 h-3.5 fill-amber-500/10" /> Authorized Merchant Hub
         </div>
         <h2 className="text-4xl sm:text-5xl font-display font-black tracking-tighter uppercase">Seller Dashboard</h2>
-        <p className={`text-sm ${isDark ? 'text-zinc-500' : 'text-stone-500'}`}>
+        <p className={`text-sm ${isDark ? 'text-zinc-400' : 'text-zinc-600 font-medium'}`}>
           Directly register digital licenses, vouchers, or keys onto AURA global pool standard.
         </p>
       </div>
@@ -256,29 +256,29 @@ export const SellView = ({ onBack, isDark }: SellViewProps) => {
           <h3 className="text-xl font-display font-black tracking-tight uppercase flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-amber-500" /> Stock Volume Statistics
           </h3>
-          <p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-stone-500'}`}>Live status of your registered stock pool inventory & verification status.</p>
+          <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-600 font-medium'}`}>Live status of your registered stock pool inventory & verification status.</p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className={`p-5 rounded-2xl border ${isDark ? 'bg-zinc-950/20 border-zinc-900' : 'bg-white border-zinc-200/50'}`}>
-            <p className="text-[10px] font-mono tracking-wider text-zinc-400 font-bold uppercase">Total Listings</p>
+          <div className={`p-5 rounded-2xl border ${isDark ? 'bg-zinc-950/20 border-zinc-900 text-white' : 'bg-white border-zinc-200/50 text-zinc-900'}`}>
+            <p className={`text-[10px] font-mono tracking-wider font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Total Listings</p>
             <p className="text-2xl font-black font-mono tracking-tight mt-1">{totalSubmissions}</p>
-            <p className="text-[8px] font-mono text-zinc-500 uppercase mt-1">Pool requests</p>
+            <p className={`text-[8px] font-mono uppercase mt-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Pool requests</p>
           </div>
-          <div className={`p-5 rounded-2xl border ${isDark ? 'bg-zinc-950/20 border-zinc-900' : 'bg-white border-zinc-200/50'}`}>
-            <p className="text-[10px] font-mono tracking-wider text-zinc-400 font-bold uppercase">Activation Keys</p>
-            <p className="text-2xl font-black font-mono tracking-tight text-amber-500 mt-1">{totalCodesLive}</p>
-            <p className="text-[8px] font-mono text-zinc-500 uppercase mt-1">Total items registered</p>
+          <div className={`p-5 rounded-2xl border ${isDark ? 'bg-zinc-950/20 border-zinc-900 text-white' : 'bg-white border-zinc-200/50 text-zinc-900'}`}>
+            <p className={`text-[10px] font-mono tracking-wider font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Activation Keys</p>
+            <p className="text-2xl font-black font-mono tracking-tight text-amber-600 dark:text-amber-500 mt-1">{totalCodesLive}</p>
+            <p className={`text-[8px] font-mono uppercase mt-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Total items registered</p>
           </div>
-          <div className={`p-5 rounded-2xl border ${isDark ? 'bg-zinc-950/20 border-zinc-900' : 'bg-white border-zinc-200/50'}`}>
-            <p className="text-[10px] font-mono tracking-wider text-zinc-400 font-bold uppercase">Pending Escrow</p>
+          <div className={`p-5 rounded-2xl border ${isDark ? 'bg-zinc-950/20 border-zinc-900 text-white' : 'bg-white border-zinc-200/50 text-zinc-900'}`}>
+            <p className={`text-[10px] font-mono tracking-wider font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Pending Escrow</p>
             <p className="text-2xl font-black font-mono tracking-tight mt-1">${totalPayoutPending.toFixed(2)}</p>
-            <p className="text-[8px] font-mono text-amber-500 font-bold uppercase mt-1">{pendingCount} Awaiting verification</p>
+            <p className="text-[8px] font-mono text-amber-600 dark:text-amber-500 font-bold uppercase mt-1">{pendingCount} Awaiting verification</p>
           </div>
-          <div className={`p-5 rounded-2xl border ${isDark ? 'bg-zinc-950/20 border-zinc-900' : 'bg-white border-zinc-200/50'}`}>
-            <p className="text-[10px] font-mono tracking-wider text-zinc-400 font-bold uppercase">Total Earned</p>
-            <p className="text-2xl font-black font-mono tracking-tight text-emerald-500 mt-1">${totalEarnedApproved.toFixed(2)}</p>
-            <p className="text-[8px] font-mono text-emerald-500 font-bold uppercase mt-1">{approvedCount} Liquidated items</p>
+          <div className={`p-5 rounded-2xl border ${isDark ? 'bg-zinc-950/20 border-zinc-900 text-white' : 'bg-white border-zinc-200/50 text-zinc-900'}`}>
+            <p className={`text-[10px] font-mono tracking-wider font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Total Earned</p>
+            <p className="text-2xl font-black font-mono tracking-tight text-emerald-600 dark:text-emerald-500 mt-1">${totalEarnedApproved.toFixed(2)}</p>
+            <p className="text-[8px] font-mono text-emerald-600 dark:text-emerald-500 font-bold uppercase mt-1">{approvedCount} Liquidated items</p>
           </div>
         </div>
       </div>

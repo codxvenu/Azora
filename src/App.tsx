@@ -46,6 +46,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { ProfileView } from './components/ProfileView';
 import { AuthView } from './components/AuthView';
 import { CheckoutView } from './components/CheckoutView';
+import { CategoryDetailView } from './components/CategoryDetailView';
 
 // Views
 type View = 'browse' | 'sell' | 'wallet' | 'orders' | 'admin' | 'profile' | 'login' | 'register' | 'forgot' | 'checkout';
@@ -259,6 +260,7 @@ const AppContent = () => {
   const [giftCards, setGiftCards] = useState<GiftCard[]>(DEFAULT_CARDS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [activeDetailCategory, setActiveDetailCategory] = useState<string | null>(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [selectedCard, setSelectedCard] = useState<GiftCard | null>(null);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
@@ -382,14 +384,14 @@ const AppContent = () => {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-8">
               <button 
-                onClick={() => setCurrentView('browse')}
+                onClick={() => { setCurrentView('browse'); setActiveDetailCategory(null); }}
                 className={`text-2xl font-display font-black tracking-tighter hover:opacity-80 transition-opacity ${isDark ? 'text-white' : 'text-zinc-950'}`}
               >
                 AURA
               </button>
               
               <div className="hidden md:flex items-center gap-6">
-                <NavButton active={currentView === 'browse'} isDark={isDark} onClick={() => setCurrentView('browse')}>Browse</NavButton>
+                <NavButton active={currentView === 'browse'} isDark={isDark} onClick={() => { setCurrentView('browse'); setActiveDetailCategory(null); }}>Browse</NavButton>
                 <NavButton active={currentView === 'sell'} isDark={isDark} onClick={() => setCurrentView('sell')}>Sell</NavButton>
                 {user && <NavButton active={currentView === 'orders'} isDark={isDark} onClick={() => setCurrentView('orders')}>Orders</NavButton>}
                 {profile?.role === 'admin' && <NavButton active={currentView === 'admin'} isDark={isDark} onClick={() => setCurrentView('admin')}>Admin</NavButton>}
@@ -516,7 +518,7 @@ const AppContent = () => {
             className="md:hidden fixed inset-0 z-40 bg-white pt-20 px-6"
           >
             <div className="flex flex-col gap-6 text-2xl font-display font-bold">
-              <button onClick={() => { setCurrentView('browse'); setIsMenuOpen(false); }}>Browse</button>
+              <button onClick={() => { setCurrentView('browse'); setActiveDetailCategory(null); setIsMenuOpen(false); }}>Browse</button>
               <button onClick={() => { setCurrentView('sell'); setIsMenuOpen(false); }}>Sell</button>
               {user && <button onClick={() => { setCurrentView('orders'); setIsMenuOpen(false); }}>Orders</button>}
               {profile?.role === 'admin' && <button onClick={() => { setCurrentView('admin'); setIsMenuOpen(false); }}>Admin</button>}
@@ -536,168 +538,183 @@ const AppContent = () => {
         <AnimatePresence mode="wait">
           {currentView === 'browse' && !selectedCard && (
             <motion.div 
-              key="browse"
+              key={activeDetailCategory ? `category-${activeDetailCategory}` : "browse"}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className="space-y-12"
             >
-              {/* Hero */}
-              <div className="bg-zinc-900 rounded-[1.5rem] p-8 sm:p-16 text-white relative overflow-hidden">
-                <div className="relative z-10 max-w-2xl space-y-6">
-                  <Badge className="bg-white/10 text-white border-white/20">Limited Time Offer</Badge>
-                  <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tighter leading-none">
-                    GET UP TO <span className="text-zinc-400">20% OFF</span> ON APPLE CARDS.
-                  </h1>
-                  <p className="text-zinc-400 text-lg sm:text-xl font-medium max-w-lg">
-                    Instantly buy and sell gift cards with zero fees and maximum security.
-                  </p>
-                </div>
-                <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
-                  <div className="absolute inset-0 bg-gradient-to-l from-zinc-900 to-transparent z-10" />
-                  <img src="https://picsum.photos/seed/giftcard/800/800" alt="Hero" className="w-full h-full object-cover" />
-                </div>
-              </div>
-
-              {/* Marketplace */}
-              <div id="marketplace" className="space-y-16">
-                {/* Marketplace Anchor */}
-                <div id="marketplace-grid-anchor" className="scroll-mt-24" />
-
-                {/* Swapped Section 1: Trending Products Section (Shown first) */}
-                <div className="space-y-8">
-                  <div>
-                    <h2 className="text-3xl font-display font-medium tracking-tight">Trending Products</h2>
-                    <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'} mt-1`}>Highly requested digital software and activation kits updated live.</p>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                    {giftCards.slice(0, 4).map(card => (
-                      <GiftCardItem key={card.id} card={card} isDark={isDark} onClick={() => setSelectedCard(card)} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Editorial Banner 1 */}
-                <div className={`rounded-[1.5rem] p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6 border transition-all duration-500 ${
-                  isDark ? 'bg-zinc-950 text-white border-zinc-900' : 'bg-zinc-900 text-white'
-                }`}>
-                  <div className="space-y-4 max-w-xl z-10 text-left">
-                    <span className="text-[10px] font-mono font-bold tracking-widest text-zinc-400 uppercase">OFFICIAL OEM STANDARD</span>
-                    <h3 className="text-3xl sm:text-4xl font-display font-bold tracking-tight leading-none text-white">Genuine Windows 11 & Office OEM Keys</h3>
-                    <p className="text-zinc-400 text-sm leading-relaxed font-normal">Activate your systems instantly with genuine lifetime digital licenses. Global direct delivery with high security verification.</p>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      setSelectedCategory('Windows Keys');
-                      const el = document.getElementById('marketplace');
-                      el?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className={`shrink-0 transition-colors font-bold text-sm px-6 py-3 rounded-xl z-10 ${
-                      isDark ? 'bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800' : 'bg-white text-zinc-900 hover:bg-zinc-100'
-                    }`}
-                  >
-                    View Genuine Keys
-                  </button>
-                  <div className="absolute top-0 right-0 w-1/3 h-full pointer-events-none opacity-10 select-none hidden sm:block">
-                    <div className="text-[12rem] font-black tracking-tighter text-white select-none translate-x-20 translate-y-10">OEM</div>
-                  </div>
-                </div>
-
-                {/* Swapped Section 2: Browse All Deals Section (Shown second) */}
-                <div className="space-y-6">
-                  {/* Category Buttons row at top */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-zinc-200/5 dark:border-zinc-900 pb-3">
-                    <div className="space-y-1">
-                      <h2 className="text-3xl font-display font-medium tracking-tight">Browse All Deals</h2>
-                      <p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-stone-500'}`}>Filter by categories or enter a query to locate direct keys instantly.</p>
-                    </div>
-                    
-                    <div className="flex gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
-                      {categories.map(cat => (
-                        <button
-                          key={cat}
-                          onClick={() => setSelectedCategory(cat)}
-                          className={`px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
-                            selectedCategory === cat 
-                              ? (isDark ? 'bg-white text-zinc-950 shadow-lg shadow-white/5' : 'bg-black text-white') 
-                              : (isDark ? 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white hover:border-zinc-750' : 'bg-white text-zinc-500 border border-zinc-200 hover:border-zinc-405')
-                          }`}
-                        >
-                          {cat}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Search Bar BELOW category list, full-width */}
-                  <div className="relative w-full">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-                    <input 
-                      type="text" 
-                      placeholder="Search for premium gift cards, activation keys, or software..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className={`w-full pl-11 pr-4 py-3.5 rounded-2xl outline-none border transition-all text-sm font-medium ${
-                        isDark 
-                          ? 'bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-zinc-650' 
-                          : 'bg-white border-zinc-250 text-zinc-900 placeholder-zinc-450 focus:border-zinc-400 shadow-sm'
-                      }`}
-                    />
-                  </div>
-
-                  {/* Grid displays filtered details */}
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-4">
-                    {filteredCards.map(card => (
-                      <GiftCardItem key={card.id} card={card} isDark={isDark} onClick={() => setSelectedCard(card)} />
-                    ))}
-                    {filteredCards.length === 0 && (
-                      <div className="col-span-full py-20 text-center text-zinc-500">
-                        <p className="text-xl font-medium">No products found matching your search criteria.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Hot Deals is deleted as requested! */}
-
-                {/* Steam-Style Featured Deals Showcase */}
-                <FeaturedDealsShowcase 
-                  products={giftCards} 
-                  onSelectProduct={(product) => setSelectedCard(product)} 
-                  isDark={isDark} 
+              {activeDetailCategory ? (
+                <CategoryDetailView
+                  categoryName={activeDetailCategory}
+                  giftCards={giftCards}
+                  isDark={isDark}
+                  onBack={() => {
+                    setActiveDetailCategory(null);
+                    window.scrollTo({ top: 0, behavior: 'instant' });
+                  }}
+                  onSelectCard={(card) => setSelectedCard(card)}
                 />
-
-                {/* Editorial Banner 2 */}
-                <div className={`rounded-[1.5rem] p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6 border transition-all duration-500 ${
-                  isDark 
-                    ? 'bg-zinc-950 text-white border-zinc-900' 
-                    : 'bg-white text-zinc-900 border-zinc-200/60 shadow-sm'
-                }`}>
-                  <div className="space-y-4 max-w-xl z-10 text-left">
-                    <span className="text-[10px] font-mono font-bold tracking-widest text-zinc-500 uppercase">GAMING & CONSOLES</span>
-                    <h3 className={`text-3xl sm:text-4xl font-display font-semibold tracking-tight leading-none ${isDark ? 'text-white' : 'text-zinc-900'}`}>Minecraft & Xbox Subscriptions</h3>
-                    <p className={`text-sm leading-relaxed font-normal ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>Unlock infinite game catalogs, online multiplayer, and premium entertainment codes delivered straight to your dashboard ledger.</p>
+              ) : (
+                <>
+                  {/* Hero */}
+                  <div className="bg-zinc-900 rounded-[1.5rem] p-8 sm:p-16 text-white relative overflow-hidden">
+                    <div className="relative z-10 max-w-2xl space-y-6">
+                      <Badge className="bg-white/10 text-white border-white/20">Limited Time Offer</Badge>
+                      <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tighter leading-none text-left">
+                        GET UP TO <span className="text-zinc-400">20% OFF</span> ON APPLE CARDS.
+                      </h1>
+                      <p className="text-zinc-400 text-lg sm:text-xl font-medium max-w-lg text-left">
+                        Instantly buy and sell gift cards with zero fees and maximum security.
+                      </p>
+                    </div>
+                    <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
+                      <div className="absolute inset-0 bg-gradient-to-l from-zinc-900 to-transparent z-10" />
+                      <img src="https://picsum.photos/seed/giftcard/800/800" alt="Hero" className="w-full h-full object-cover" />
+                    </div>
                   </div>
-                  <button 
-                    onClick={() => {
-                      setSelectedCategory('Subscriptions');
-                      const el = document.getElementById('marketplace');
-                      el?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className={`shrink-0 transition-colors font-bold text-sm px-6 py-3 rounded-xl z-10 ${
-                      isDark ? 'bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-805' : 'bg-black text-white hover:bg-zinc-800'
-                    }`}
-                  >
-                    Explore Subscriptions
-                  </button>
-                  <div className="absolute top-0 right-0 w-1/3 h-full pointer-events-none opacity-[0.03] select-none hidden sm:block">
-                    <div className="text-[12rem] font-black tracking-tighter text-black select-none translate-x-20 translate-y-10">PASS</div>
-                  </div>
-                </div>
 
-                {/* How it Works */}
-                <EditorialHowItWorks isDark={isDark} onToggleDark={() => setIsDark(!isDark)} />
-              </div>
+                  {/* Marketplace */}
+                  <div id="marketplace" className="space-y-16">
+                    {/* Marketplace Anchor */}
+                    <div id="marketplace-grid-anchor" className="scroll-mt-24" />
+
+                    {/* Swapped Section 1: Trending Products Section (Shown first) */}
+                    <div className="space-y-8 text-left">
+                      <div>
+                        <h2 className="text-3xl font-display font-medium tracking-tight">Trending Products</h2>
+                        <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-stone-500'} mt-1`}>Highly requested digital software and activation kits updated live.</p>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {giftCards.slice(0, 4).map(card => (
+                          <GiftCardItem key={card.id} card={card} isDark={isDark} onClick={() => setSelectedCard(card)} />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Editorial Banner 1 */}
+                    <div className={`rounded-[1.5rem] p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6 border transition-all duration-500 ${
+                      isDark ? 'bg-zinc-950 text-white border-zinc-900' : 'bg-zinc-900 text-white'
+                    }`}>
+                      <div className="space-y-4 max-w-xl z-10 text-left">
+                        <span className="text-[10px] font-mono font-bold tracking-widest text-zinc-400 uppercase">OFFICIAL OEM STANDARD</span>
+                        <h3 className="text-3xl sm:text-4xl font-display font-bold tracking-tight leading-none text-white">Genuine Windows 11 & Office OEM Keys</h3>
+                        <p className="text-zinc-400 text-sm leading-relaxed font-normal">Activate your systems instantly with genuine lifetime digital licenses. Global direct delivery with high security verification.</p>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          setActiveDetailCategory('Windows Keys');
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className={`shrink-0 transition-colors font-bold text-sm px-6 py-3 rounded-xl z-10 ${
+                          isDark ? 'bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800' : 'bg-white text-zinc-900 hover:bg-zinc-100'
+                        }`}
+                      >
+                        View Genuine Keys
+                      </button>
+                      <div className="absolute top-0 right-0 w-1/3 h-full pointer-events-none opacity-10 select-none hidden sm:block">
+                        <div className="text-[12rem] font-black tracking-tighter text-white select-none translate-x-20 translate-y-10">OEM</div>
+                      </div>
+                    </div>
+
+                    {/* Swapped Section 2: Choose Category Section (Replaced Browse All Deals) */}
+                    <div className="space-y-6 text-left">
+                      <div>
+                        <h2 className="text-3xl font-display font-medium tracking-tight">Explore Categories</h2>
+                        <p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-stone-500'} mt-1`}>Select a category to locate and purchase electronic licenses and key codes instantly.</p>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-2">
+                        {Array.from(new Set(giftCards.map(c => c.category))).map(catName => {
+                          const firstCardInCat = giftCards.find(c => c.category === catName);
+                          const catImage = firstCardInCat?.image || 'https://images.unsplash.com/photo-1557821314-4a50fd44fc82?q=80&w=800&auto=format&fit=crop';
+                          
+                          return (
+                            <motion.div 
+                              key={catName}
+                              whileHover={{ y: -6 }}
+                              onClick={() => {
+                                setActiveDetailCategory(catName);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                              }}
+                              className={`p-1.5 pb-3 transition-all duration-300 group cursor-pointer relative flex flex-col justify-between h-full rounded-2xl ${
+                                isDark 
+                                  ? 'bg-transparent text-white border border-transparent hover:bg-zinc-900/30 hover:border-zinc-900/50 hover:shadow-2xl hover:shadow-black/20' 
+                                  : 'bg-transparent text-zinc-950 border border-transparent hover:bg-white/80 hover:border-zinc-200/60 hover:shadow-xl hover:shadow-zinc-200/30'
+                              }`}
+                            >
+                              <div className="space-y-3">
+                                {/* Visual card representation */}
+                                <div className={`aspect-[4/3] rounded-xl overflow-hidden relative border ${
+                                  isDark ? 'bg-zinc-900/40 border-zinc-900/40' : 'bg-zinc-50/50 border-zinc-200/10'
+                                }`}>
+                                  <img 
+                                    referrerPolicy="no-referrer" 
+                                    src={catImage} 
+                                    alt={catName} 
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                  />
+                                </div>
+                                
+                                {/* Metadata section */}
+                                <div className="space-y-0.5 px-1.5 text-left">
+                                  <p className={`text-[8px] sm:text-[9px] font-mono font-bold uppercase tracking-widest ${
+                                    isDark ? 'text-zinc-500' : 'text-zinc-400'
+                                  }`}>
+                                    DIRECTORY
+                                  </p>
+                                  <h3 className={`font-bold text-sm sm:text-base group-hover:text-amber-500 transition-colors ${
+                                    isDark ? 'text-zinc-200' : 'text-zinc-900'
+                                  }`}>
+                                    {catName}
+                                  </h3>
+                                </div>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Steam-Style Featured Deals Showcase */}
+                    <FeaturedDealsShowcase 
+                      products={giftCards} 
+                      onSelectProduct={(product) => setSelectedCard(product)} 
+                      isDark={isDark} 
+                    />
+
+                    {/* Editorial Banner 2 */}
+                    <div className={`rounded-[1.5rem] p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6 border transition-all duration-500 ${
+                      isDark 
+                        ? 'bg-zinc-950 text-white border-zinc-900' 
+                        : 'bg-white text-zinc-900 border-zinc-200/60 shadow-sm'
+                    }`}>
+                      <div className="space-y-4 max-w-xl z-10 text-left">
+                        <span className="text-[10px] font-mono font-bold tracking-widest text-zinc-500 uppercase">GAMING & CONSOLES</span>
+                        <h3 className={`text-3xl sm:text-4xl font-display font-semibold tracking-tight leading-none ${isDark ? 'text-white' : 'text-zinc-900'}`}>Minecraft & Xbox Subscriptions</h3>
+                        <p className={`text-sm leading-relaxed font-normal ${isDark ? 'text-zinc-400' : 'text-zinc-650'}`}>Unlock infinite game catalogs, online multiplayer, and premium entertainment codes delivered straight to your dashboard ledger.</p>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          setActiveDetailCategory('Subscriptions');
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className={`shrink-0 transition-colors font-bold text-sm px-6 py-3 rounded-xl z-10 ${
+                          isDark ? 'bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-805' : 'bg-black text-white hover:bg-zinc-800'
+                        }`}
+                      >
+                        Explore Subscriptions
+                      </button>
+                      <div className="absolute top-0 right-0 w-1/3 h-full pointer-events-none opacity-[0.03] select-none hidden sm:block">
+                        <div className="text-[12rem] font-black tracking-tighter text-black select-none translate-x-20 translate-y-10">PASS</div>
+                      </div>
+                    </div>
+
+                    {/* How it Works */}
+                    <EditorialHowItWorks isDark={isDark} onToggleDark={() => setIsDark(!isDark)} />
+                  </div>
+                </>
+              )}
             </motion.div>
           )}
 

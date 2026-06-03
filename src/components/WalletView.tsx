@@ -93,22 +93,22 @@ export const WalletView = ({ profile, onBack, onDeposit, isDark }: WalletViewPro
                   </div>
                   <div>
                     <p className="font-bold text-sm capitalize">{tx.type}</p>
-                    <p className={`text-[10px] font-mono ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                    <p className={`text-[10px] font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-600 font-medium'}`}>
                       {format(new Date(tx.timestamp), 'MMM dd, yyyy • HH:mm')}
                     </p>
                   </div>
                 </div>
                 <p className={`font-mono font-bold text-sm ${
                   tx.type === 'deposit' || tx.type === 'sale' 
-                    ? (isDark ? 'text-zinc-300' : 'text-zinc-800') 
-                    : (isDark ? 'text-zinc-500' : 'text-zinc-600')
+                    ? (isDark ? 'text-emerald-400' : 'text-emerald-700') 
+                    : (isDark ? 'text-zinc-300' : 'text-zinc-800')
                 }`}>
                   {tx.type === 'deposit' || tx.type === 'sale' ? '+' : '-'}${tx.amount.toFixed(2)}
                 </p>
               </div>
             ))}
             {transactions.length === 0 && (
-              <p className={`text-center py-12 text-sm ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+              <p className={`text-center py-12 text-sm ${isDark ? 'text-zinc-500' : 'text-zinc-600 font-medium'}`}>
                 No transactions yet.
               </p>
             )}

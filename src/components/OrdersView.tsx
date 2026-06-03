@@ -50,7 +50,7 @@ export const OrdersView = ({ onBack, isDark }: OrdersViewProps) => {
             </div>
             <div className="flex-1 space-y-0.5 text-center sm:text-left">
               <h3 className="font-bold text-base leading-snug">{order.productName}</h3>
-              <p className={`text-[10px] font-mono uppercase tracking-widest ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+              <p className={`text-[10px] font-mono uppercase tracking-widest ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                 {format(new Date(order.timestamp), 'MMMM dd, yyyy')}
               </p>
             </div>
@@ -61,7 +61,7 @@ export const OrdersView = ({ onBack, isDark }: OrdersViewProps) => {
             </div>
             <div className="text-right flex flex-col items-center sm:items-end shrink-0">
               <p className="font-display font-black text-lg">${order.amount.toFixed(2)}</p>
-              <div className={`flex items-center gap-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-655'}`}>
+              <div className={`flex items-center gap-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                 <Check className="w-3.5 h-3.5" />
                 <span className="text-[9px] font-mono font-bold uppercase tracking-widest">Delivered</span>
               </div>
