@@ -787,8 +787,8 @@ const AppContent = () => {
             <DepositModal 
               isDark={isDark}
               onClose={() => setIsDepositModalOpen(false)}
-              onSuccess={(amount) => {
-                handleDepositSuccess(amount);
+              onSuccess={(amount, method) => {
+                handleDepositSuccess(amount, method);
                 setIsDepositModalOpen(false);
               }}
             />
@@ -850,22 +850,21 @@ const AppContent = () => {
     </div>
   );
 
-  async function handleDepositSuccess(amount: number) {
+  async function handleDepositSuccess(amount: number, method: string) {
     if (!user) return;
     try {
-      await updateDoc(doc(db, 'users', user.uid), {
-        walletBalance: increment(amount)
-      });
       await addDoc(collection(db, 'transactions'), {
         userId: user.uid,
+        userEmail: user.email || 'Anonymous',
         amount: amount,
         type: 'deposit',
-        status: 'completed',
+        method: method || 'Card',
+        status: 'pending',
         timestamp: new Date().toISOString()
       });
-      showNotification(`Successfully deposited $${amount.toFixed(2)}`, 'success');
+      showNotification(`Deposit request of $${amount.toFixed(2)} submitted for review. Pending authorization.`, 'success');
     } catch (err) {
-      handleFirestoreError(err, OperationType.WRITE, 'users');
+      handleFirestoreError(err, OperationType.WRITE, 'transactions');
     }
   }
 
@@ -883,7 +882,33 @@ const AppContent = () => {
       return;
     }
 
+    if (card.inventoryCount <= 0) {
+      showNotification('This product is currently out of stock.', 'error');
+      return;
+    }
+
     try {
+      // Pull real code if available in stock list
+      let allocatedCode = 'AURA-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+      let updatedCodes = [...(card.codes || [])];
+      let updatedCount = card.inventoryCount;
+
+      if (updatedCodes.length > 0) {
+        allocatedCode = updatedCodes.shift()!;
+        updatedCount = updatedCodes.length;
+
+        await updateDoc(doc(db, 'giftCards', card.id), {
+          codes: updatedCodes,
+          inventoryCount: updatedCount
+        });
+      } else {
+        if (updatedCount > 0) {
+          await updateDoc(doc(db, 'giftCards', card.id), {
+            inventoryCount: increment(-1)
+          });
+        }
+      }
+
       // 1. Create Order
       const orderData: Omit<Order, 'id'> = {
         userId: user.uid,
@@ -892,7 +917,7 @@ const AppContent = () => {
         status: 'completed',
         timestamp: new Date().toISOString(),
         deliveryEmail: user.email || '',
-        codes: ['AURA-' + Math.random().toString(36).substring(2, 10).toUpperCase()],
+        codes: [allocatedCode],
         productName: customAmount !== undefined ? `${card.brand} (Voucher Balance)` : card.brand,
         productImage: card.image
       };

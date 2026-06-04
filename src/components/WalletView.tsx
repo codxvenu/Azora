@@ -92,16 +92,27 @@ export const WalletView = ({ profile, onBack, onDeposit, isDark }: WalletViewPro
                     {tx.type === 'deposit' ? <Plus className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
                   </div>
                   <div>
-                    <p className="font-bold text-sm capitalize">{tx.type}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-sm capitalize">{tx.type}</p>
+                      {tx.status && tx.status !== 'completed' && (
+                        <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest font-mono ${
+                          tx.status === 'pending' 
+                            ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' 
+                            : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                        }`}>
+                          {tx.status}
+                        </span>
+                      )}
+                    </div>
                     <p className={`text-[10px] font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-600 font-medium'}`}>
                       {format(new Date(tx.timestamp), 'MMM dd, yyyy • HH:mm')}
                     </p>
                   </div>
                 </div>
                 <p className={`font-mono font-bold text-sm ${
-                  tx.type === 'deposit' || tx.type === 'sale' 
+                  (tx.type === 'deposit' || tx.type === 'sale') && tx.status === 'completed'
                     ? (isDark ? 'text-emerald-400' : 'text-emerald-700') 
-                    : (isDark ? 'text-zinc-300' : 'text-zinc-800')
+                    : (isDark ? 'text-zinc-400' : 'text-zinc-600')
                 }`}>
                   {tx.type === 'deposit' || tx.type === 'sale' ? '+' : '-'}${tx.amount.toFixed(2)}
                 </p>

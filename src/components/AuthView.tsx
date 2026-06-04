@@ -287,18 +287,18 @@ export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: A
       </AnimatePresence>
 
       <div className={`rounded-[1.5rem] p-6 sm:p-8 border shadow-2xl transition-all duration-500 ${
-        isDark ? 'bg-zinc-950/40 border-zinc-900 shadow-black' : 'bg-white border-zinc-200/50 shadow-zinc-200/40'
+        isDark ? 'bg-zinc-950/40 border-zinc-900 shadow-black' : 'bg-white border-zinc-150 shadow-zinc-200/40'
       }`}>
         {/* Title */}
         <div className="space-y-2 mb-8">
-          <h3 className="text-3xl font-display font-black tracking-tighter uppercase">
+          <h3 className="text-3xl font-display font-black tracking-tighter uppercase text-zinc-900 dark:text-white">
             {mode === 'login' && 'Identity Access'}
             {mode === 'register' && 'New Account'}
             {mode === 'forgot' && 'Reset Vault'}
             {mode === 'otp' && 'Verify Identity'}
             {mode === 'reset-success' && 'Reset Complete'}
           </h3>
-          <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-600 font-medium'}`}>
+          <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500 font-medium'}`}>
             {mode === 'login' && "Sign in to access your digital aura dashboard."}
             {mode === 'register' && "Create an aura identity and trade instantly."}
             {mode === 'forgot' && "Provide your email to receive an instant OTP passcode."}

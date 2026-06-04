@@ -18,6 +18,7 @@ export interface GiftCard {
   description: string;
   image: string;
   inventoryCount: number;
+  codes?: string[];
 }
 
 export interface Order {
@@ -58,8 +59,10 @@ export interface Withdrawal {
 export interface Transaction {
   id: string;
   userId: string;
+  userEmail?: string;
   amount: number;
   type: 'deposit' | 'withdrawal' | 'purchase' | 'sale';
+  method?: string;
   status: string;
   timestamp: string;
 }
