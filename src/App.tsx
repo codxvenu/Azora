@@ -619,9 +619,24 @@ const AppContent = () => {
 
                     {/* Swapped Section 2: Choose Category Section (Replaced Browse All Deals) */}
                     <div className="space-y-6 text-left">
-                      <div>
-                        <h2 className="text-3xl font-display font-medium tracking-tight">Explore Categories</h2>
-                        <p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-stone-500'} mt-1`}>Select a category to locate and purchase electronic licenses and key codes instantly.</p>
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <h2 className="text-3xl font-display font-medium tracking-tight">Explore Categories</h2>
+                          <p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-stone-500'} mt-1`}>Select a category to locate and purchase electronic licenses and key codes instantly.</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setActiveDetailCategory('All');
+                            window.scrollTo({ top: 0, behavior: 'instant' });
+                          }}
+                          className={`text-xs font-mono font-bold uppercase tracking-wider pb-1 transition-all border-b ${
+                            isDark 
+                              ? 'text-zinc-400 hover:text-white border-zinc-800 hover:border-white' 
+                              : 'text-zinc-500 hover:text-zinc-900 border-zinc-300 hover:border-zinc-900'
+                          }`}
+                        >
+                          Browse All
+                        </button>
                       </div>
 
                       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-2">

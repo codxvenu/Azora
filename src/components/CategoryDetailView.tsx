@@ -22,9 +22,12 @@ export function CategoryDetailView({
   const [searchQuery, setSearchQuery] = useState('');
 
   // Get all cards in this category
-  const categoryCards = giftCards.filter(
-    (card) => card.category.toLowerCase() === categoryName.toLowerCase()
-  );
+  const isAllCategory = categoryName.toLowerCase() === 'all' || categoryName.toLowerCase() === 'all categories';
+  const categoryCards = isAllCategory
+    ? giftCards
+    : giftCards.filter(
+        (card) => card.category.toLowerCase() === categoryName.toLowerCase()
+      );
 
   // Filter these cards based on the search query
   const filteredCards = categoryCards.filter((card) =>
@@ -54,13 +57,13 @@ export function CategoryDetailView({
             <ArrowLeft className="w-4 h-4" /> Back to Categories
           </button>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight uppercase">
-              {categoryName} <span className="text-zinc-400">LEDGER</span>
+            <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight uppercase text-zinc-900 dark:text-white">
+              {isAllCategory ? 'All Products' : categoryName} <span className="text-zinc-400">LEDGER</span>
             </h1>
             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold font-mono uppercase tracking-wider border ${
               isDark 
                 ? 'bg-zinc-900 border-zinc-800 text-zinc-400' 
-                : 'bg-zinc-100 border-zinc-205 text-zinc-650'
+                : 'bg-zinc-100 border-zinc-250 text-zinc-600'
             }`}>
               {categoryCards.length} Keys
             </span>
@@ -72,13 +75,13 @@ export function CategoryDetailView({
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
           <input
             type="text"
-            placeholder={`Search keys in ${categoryName}...`}
+            placeholder={isAllCategory ? "Search all keys..." : `Search keys in ${categoryName}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={`w-full pl-11 pr-4 py-3 rounded-2xl outline-none border transition-all text-xs font-medium ${
               isDark
                 ? 'bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-zinc-650'
-                : 'bg-white border-zinc-250 text-zinc-900 placeholder-zinc-450 focus:border-zinc-400 shadow-sm'
+                : 'bg-white border-zinc-250 text-zinc-900 placeholder-zinc-450 focus:border-zinc-450 focus:border-zinc-400 shadow-sm'
             }`}
           />
         </div>
@@ -89,8 +92,8 @@ export function CategoryDetailView({
         <div className="space-y-6 text-left">
           <div className="flex items-center gap-2">
             <Grid className="w-4 h-4 text-zinc-500" />
-            <h2 className="text-xl font-display font-medium tracking-tight">
-              Search Results for "{searchQuery}" in <span className="text-zinc-400">{categoryName}</span>
+            <h2 className="text-xl font-display font-medium tracking-tight text-zinc-900 dark:text-white">
+              Search Results for "{searchQuery}" in <span className="text-zinc-400">{isAllCategory ? 'All Products' : categoryName}</span>
             </h2>
           </div>
 
@@ -105,7 +108,7 @@ export function CategoryDetailView({
             ))}
             {filteredCards.length === 0 && (
               <div className="col-span-full py-20 text-center text-zinc-500 border border-dashed rounded-3xl border-zinc-200/40 dark:border-zinc-800/40">
-                <p className="text-base font-medium">No direct keys found for "{searchQuery}".</p>
+                <p className="text-base font-medium text-zinc-900 dark:text-zinc-300">No direct keys found for "{searchQuery}".</p>
                 <p className="text-xs text-zinc-400 mt-1">Try searching another term, or view trending keys below.</p>
               </div>
             )}
@@ -123,8 +126,8 @@ export function CategoryDetailView({
                     <Sparkles className="w-4 h-4" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-display font-medium tracking-tight">
-                      Trending keys in {categoryName}
+                    <h2 className="text-2xl font-display font-medium tracking-tight text-zinc-900 dark:text-white">
+                      Trending keys {isAllCategory ? 'Overall' : `in ${categoryName}`}
                     </h2>
                     <p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-stone-500'} mt-0.5`}>
                       Most demanded digital passes, licenses, and top-ups this hour.
@@ -154,11 +157,11 @@ export function CategoryDetailView({
           }`}>
             <div className="space-y-3 z-10 text-left">
               <span className="text-[10px] font-mono font-bold tracking-widest text-emerald-500 uppercase bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">LEDGER DIRECT GUARANTEE</span>
-              <h3 className="text-2xl sm:text-3xl font-display font-semibold tracking-tight leading-none text-black dark:text-white">Need support or customization?</h3>
-              <p className="text-zinc-500 dark:text-zinc-400 text-xs max-w-xl leading-relaxed">Our digital assets are sourced directly from validated suppliers. You get high discount margins and verified direct delivery for your favorite {categoryName} services.</p>
+              <h3 className="text-2xl sm:text-3xl font-display font-semibold tracking-tight leading-none text-zinc-900 dark:text-white">Need support or customization?</h3>
+              <p className="text-zinc-500 dark:text-zinc-400 text-xs max-w-xl leading-relaxed">Our digital assets are sourced directly from validated suppliers. You get high discount margins and verified direct delivery for your favorite {isAllCategory ? 'e-commerce & tech' : categoryName} services.</p>
             </div>
-            <div className="text-5xl font-mono font-black tracking-tighter opacity-15 select-none hidden sm:block">
-              {categoryName.toUpperCase()}
+            <div className="text-5xl font-mono font-black tracking-tighter opacity-15 select-none hidden sm:block text-zinc-400 dark:text-zinc-600">
+              {isAllCategory ? 'LEDGER' : categoryName.toUpperCase()}
             </div>
           </div>
 
@@ -170,8 +173,8 @@ export function CategoryDetailView({
                   <Flame className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-display font-medium tracking-tight">
-                    Hot Offers in {categoryName}
+                  <h2 className="text-2xl font-display font-medium tracking-tight text-zinc-900 dark:text-white">
+                    Hot Offers {isAllCategory ? 'Overall' : `in ${categoryName}`}
                   </h2>
                   <p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-stone-500'} mt-0.5`}>
                     Instant keys with the highest active markdown savings.
