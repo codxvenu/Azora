@@ -3,7 +3,7 @@ import { db } from '../lib/firebase';
 import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { Order } from '../types';
 import { format } from 'date-fns';
-import { ShoppingBag, Check } from 'lucide-react';
+import { ShoppingBag, Check, Copy } from 'lucide-react';
 import { useAuth } from '../lib/useAuth';
 
 interface OrdersViewProps {
@@ -14,6 +14,7 @@ interface OrdersViewProps {
 export const OrdersView = ({ onBack, isDark }: OrdersViewProps) => {
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -48,16 +49,57 @@ export const OrdersView = ({ onBack, isDark }: OrdersViewProps) => {
                 className="w-full h-full object-cover" 
               />
             </div>
-            <div className="flex-1 space-y-0.5 text-center sm:text-left">
-              <h3 className="font-bold text-base leading-snug">{order.productName}</h3>
-              <p className={`text-[10px] font-mono uppercase tracking-widest ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                {format(new Date(order.timestamp), 'MMMM dd, yyyy')}
-              </p>
+            <div className="flex-1 space-y-2 text-center sm:text-left">
+              <div className="space-y-0.5">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <h3 className="font-bold text-base leading-snug">{order.productName}</h3>
+                  {order.codes && order.codes.length > 1 && (
+                    <span className="bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full font-mono uppercase tracking-wider">
+                      {order.codes.length}x Items
+                    </span>
+                  )}
+                </div>
+                <p className={`text-[10px] font-mono uppercase tracking-widest ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                  {format(new Date(order.timestamp), 'MMMM dd, yyyy')}
+                </p>
+              </div>
             </div>
-            <div className={`px-5 py-3 rounded-xl border flex items-center gap-3 ${
-              isDark ? 'bg-zinc-900/60 border-zinc-850 text-white' : 'bg-zinc-50 border-zinc-200'
-            }`}>
-              <code className="font-mono font-bold text-sm tracking-wider">{order.codes?.[0] || 'AURA-PENDING'}</code>
+            
+            <div className="flex flex-col gap-1.5 w-full sm:w-auto shrink-0">
+              {order.codes && order.codes.map((code, idx) => (
+                <div 
+                  key={idx} 
+                  className={`px-4 py-2 rounded-xl border flex items-center justify-between gap-3 min-w-[200px] ${
+                    isDark ? 'bg-zinc-900/60 border-zinc-850 text-white' : 'bg-zinc-50 border-zinc-200'
+                  }`}
+                >
+                  <code className="font-mono font-bold text-xs tracking-wider">{code}</code>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(code);
+                      setCopiedCode(code);
+                      setTimeout(() => setCopiedCode(null), 2000);
+                    }}
+                    className={`p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors ${
+                      isDark ? 'text-zinc-400' : 'text-zinc-600'
+                    }`}
+                    title="Copy code"
+                  >
+                    {copiedCode === code ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5 text-zinc-400" />
+                    )}
+                  </button>
+                </div>
+              ))}
+              {(!order.codes || order.codes.length === 0) && (
+                <div className={`px-4 py-2 rounded-xl border ${
+                  isDark ? 'bg-zinc-900/60 border-zinc-850 text-zinc-500' : 'bg-zinc-50 border-zinc-200 text-zinc-400'
+                }`}>
+                  <code className="font-mono font-bold text-xs">AURA-PENDING</code>
+                </div>
+              )}
             </div>
             <div className="text-right flex flex-col items-center sm:items-end shrink-0">
               <p className="font-display font-black text-lg">${order.amount.toFixed(2)}</p>

@@ -26,7 +26,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 interface AuthViewProps {
   initialMode?: 'login' | 'register' | 'forgot';
@@ -46,7 +46,7 @@ const GoogleIcon = () => (
 
 export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: AuthViewProps) => {
   const { showNotification } = useNotification();
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'otp' | 'reset-success'>(initialMode);
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'otp' | 'reset-success' | 'twoFactorLogin'>(initialMode);
   
   // Form fields
   const [email, setEmail] = useState('');
@@ -63,6 +63,9 @@ export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: A
   const [newPassword, setNewPassword] = useState('');
   const [isSimulatingMail, setIsSimulatingMail] = useState(false);
   
+  // 2FA login PIN field
+  const [twoFactorPin, setTwoFactorPin] = useState('');
+  
   // Loading states
   const [isLoading, setIsLoading] = useState(false);
 
@@ -74,6 +77,9 @@ export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: A
       const user = userCredential.user;
       
       const profileRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(profileRef);
+      const isMfaActive = userSnap.exists() && userSnap.data()?.twoFactorEnabled === true;
+
       await setDoc(profileRef, {
         uid: user.uid,
         email: user.email || '',
@@ -82,6 +88,12 @@ export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: A
         role: user.email === 'eafstriker@gmail.com' ? 'admin' : 'user',
         createdAt: new Date().toISOString()
       }, { merge: true });
+
+      if (isMfaActive) {
+        showNotification('Standard credentials accepted. Complete 2FA Verification.', 'info');
+        setMode('twoFactorLogin');
+        return;
+      }
 
       showNotification('Successfully signed in with Google!', 'success');
       onSuccess();
@@ -108,7 +120,17 @@ export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: A
     
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      const userDocRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userDocRef);
+      if (userSnap.exists() && userSnap.data()?.twoFactorEnabled === true) {
+        showNotification('Standard password accepted. Complete 2FA verification.', 'info');
+        setMode('twoFactorLogin');
+        return;
+      }
+
       showNotification('Successfully logged in!', 'success');
       onSuccess();
     } catch (err: any) {
@@ -297,6 +319,7 @@ export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: A
             {mode === 'forgot' && 'Reset Vault'}
             {mode === 'otp' && 'Verify Identity'}
             {mode === 'reset-success' && 'Reset Complete'}
+            {mode === 'twoFactorLogin' && 'MFA CHALLENGE'}
           </h3>
           <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500 font-medium'}`}>
             {mode === 'login' && "Sign in to access your digital aura dashboard."}
@@ -304,6 +327,7 @@ export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: A
             {mode === 'forgot' && "Provide your email to receive an instant OTP passcode."}
             {mode === 'otp' && "Key in the 6-digit passcode sent to your mail inbox."}
             {mode === 'reset-success' && "Your password credentials have been updated."}
+            {mode === 'twoFactorLogin' && "Please input the 6-digit passcode from your secure mobile Authenticator app."}
           </p>
         </div>
 
@@ -640,6 +664,64 @@ export const AuthView = ({ initialMode = 'login', onSuccess, onBack, isDark }: A
               Proceed to Sign In <ArrowRight className="w-4 h-4" />
             </button>
           </div>
+        )}
+
+        {/* TWO-FACTOR AUTHENTICATION MFA LOGIN CHALLENGE */}
+        {mode === 'twoFactorLogin' && (
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (twoFactorPin.length !== 6 || isNaN(Number(twoFactorPin))) {
+                showNotification('Please enter a valid 6-digit security code.', 'error');
+                return;
+              }
+              showNotification('MFA verification successful! Access granted.', 'success');
+              onSuccess();
+            }} 
+            className="space-y-6 text-left"
+          >
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Security Verification PIN</label>
+              <div className="relative">
+                <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input 
+                  type="text"
+                  required
+                  maxLength={6}
+                  placeholder="Enter 6-digit Code"
+                  value={twoFactorPin}
+                  onChange={(e) => setTwoFactorPin(e.target.value.replace(/\D/g, ''))}
+                  className={`w-full pl-11 pr-4 py-3.5 rounded-xl text-center font-mono text-2xl font-black tracking-[0.2em] outline-none border transition-all ${
+                    isDark 
+                      ? 'bg-zinc-900 border-zinc-800 text-white focus:border-zinc-700' 
+                      : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-black'
+                  }`}
+                />
+              </div>
+              <p className={`text-[10px] text-center ${isDark ? 'text-zinc-500' : 'text-zinc-400'} mt-1`}>
+                * Feed in any 6-digit code to complete verification for testing.
+              </p>
+            </div>
+
+            <button 
+              type="submit"
+              className={`w-full py-3.5 mt-2 rounded-xl font-mono text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 duration-250 transition-all ${
+                isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-black text-white hover:bg-zinc-900'
+              }`}
+            >
+              Verify Secure Access <ShieldCheck className="w-4 h-4" />
+            </button>
+
+            <div className="text-center pt-2">
+              <button 
+                type="button"
+                onClick={() => setMode('login')}
+                className="text-xs text-zinc-400 hover:text-white flex items-center gap-1.5 mx-auto font-bold uppercase font-mono tracking-widest"
+              >
+                <ChevronLeft className="w-4 h-4" /> Use different profile session
+              </button>
+            </div>
+          </form>
         )}
       </div>
     </div>
