@@ -91,7 +91,7 @@ const getBgGradient = (id: number, isDark: boolean) => {
   }
 };
 
-export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: FeaturedDealsShowcaseProps) => {
+export const FeaturedDealsShowcase = ({ products, onSelectProduct}: FeaturedDealsShowcaseProps) => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 32, seconds: 45 });
 
@@ -138,16 +138,12 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
   return (
     <section 
       id="featured-deals-showcase" 
-      className={`rounded-3xl p-6 sm:p-8 transition-all duration-500 relative overflow-hidden border ${
-        isDark 
-          ? 'bg-[#0e0e12] border-zinc-900 shadow-2xl shadow-black/40' 
-          : 'bg-white border-zinc-200 shadow-xl shadow-zinc-100/50'
-      }`}
+      className="rounded-3xl p-6 sm:p-8 transition-all duration-500 relative overflow-hidden border bg-white dark:bg-[#0e0e12]  dark:border-zinc-900 border-zinc-200 shadow-xl dark:shadow-2xl shadow-zinc-100/50 dark:shadow-black/40"
     >
       {/* Background Ambient Glow Circles */}
       <div 
         className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-[120px] transition-all duration-1000 pointer-events-none" 
-        style={{ backgroundColor: isDark ? slide.glowColor : slide.glowColor.replace('0.15', '0.04') }} 
+        style={{ backgroundColor: slide.glowColor.replace('0.15', '0.04'), ...{ backgroundColor: true ? slide.glowColor : slide.glowColor.replace('0.15', '0.04') } }} 
       />
 
       {/* Showcase Header with Slate details */}
@@ -155,38 +151,30 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
         <div>
           <div className="flex items-center gap-2">
             <Flame className="w-5 h-5 text-red-500 fill-red-500 animate-pulse" />
-            <span className={`font-mono text-xs font-bold uppercase tracking-widest ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
               Featured Platform Core
             </span>
           </div>
-          <h2 className={`text-2xl sm:text-4xl font-display font-black tracking-tight leading-none mt-1 ${isDark ? 'text-white' : 'text-zinc-950'}`}>
+          <h2 className="text-2xl sm:text-4xl font-display font-black tracking-tight leading-none mt-1 text-zinc-950 dark:text-white">
             Super Deals Showcase
           </h2>
         </div>
 
         {/* Previous / Next Slideshow Buttons */}
         <div className="flex items-center gap-2 shrink-0">
-          <span className={`font-mono text-[10px] tracking-widest font-bold mr-2 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+          <span className="font-mono text-[10px] tracking-widest font-bold mr-2 text-zinc-400 dark:text-zinc-500">
             {slide.id} / {SLIDES.length}
           </span>
           <button 
             onClick={prevSlide}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
-              isDark 
-                ? 'border-zinc-800 bg-zinc-900/60 text-white hover:border-zinc-500 hover:bg-zinc-800' 
-                : 'border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-400 hover:bg-zinc-100'
-            }`}
+            className="w-10 h-10 rounded-xl flex items-center justify-center border transition-background border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 text-zinc-700 dark:text-white hover:border-zinc-400 dark:hover:border-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
             title="Previous collection"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button 
             onClick={nextSlide}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
-              isDark 
-                ? 'border-zinc-800 bg-zinc-900/60 text-white hover:border-zinc-500 hover:bg-zinc-800' 
-                : 'border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-400 hover:bg-zinc-100'
-            }`}
+            className="w-10 h-10 rounded-xl flex items-center justify-center border transition-background border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 text-zinc-700 dark:text-white hover:border-zinc-400 dark:hover:border-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
             title="Next collection"
           >
             <ChevronRight className="w-5 h-5" />
@@ -206,14 +194,10 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.4 }}
-              className={`w-full rounded-2xl relative overflow-hidden flex flex-col justify-between p-6 sm:p-8 shadow-inner group min-h-[400px] border bg-gradient-to-b transition-all duration-500 ${
-                getBgGradient(slide.id, isDark)
-              } ${isDark ? 'text-white' : 'text-zinc-900'}`}
+              className="w-full rounded-2xl relative overflow-hidden flex flex-col justify-between p-6 sm:p-8 shadow-inner group min-h-[400px]  bg-gradient-to-b transition-background duration-500 text-zinc-900 dark:text-white"
             >
               {/* Image Underlay with cinematic overlay and hover zoom */}
-              <div className={`absolute inset-0 z-0 pointer-events-none group-hover:scale-105 transition-transform duration-700 ${
-                isDark ? 'opacity-30 mix-blend-overlay' : 'opacity-[0.05] mix-blend-multiply'
-              }`}>
+              <div className="absolute inset-0 z-0 pointer-events-none group-hover:scale-105 transition-transform duration-700 opacity-[0.05] dark:opacity-30 mix-blend-multiply dark:mix-blend-overlay">
                 <img 
                   referrerPolicy="no-referrer" 
                   src={slide.bannerImage} 
@@ -223,9 +207,7 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
               </div>
 
               {/* Bottom Subtle Gradient over image to ensure readable text */}
-              <div className={`absolute inset-0 pointer-events-none z-[1] bg-gradient-to-t ${
-                isDark ? 'from-zinc-950 via-zinc-900/50 to-transparent' : 'from-white via-white/40 to-transparent'
-              }`} />
+              <div className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-t from-white dark:from-zinc-950 via-white/40 dark:via-zinc-900/50 to-transparent"/>
 
               {/* Top Row: Promo Badge & Ticking Countdowns */}
               <div className="relative z-10 flex flex-wrap justify-between items-center gap-3">
@@ -243,23 +225,17 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
 
               {/* Center decorative float particles or badge */}
               <div className="relative z-10 my-auto py-8 flex flex-col items-start gap-2">
-                <span className={`text-[10px] font-mono tracking-widest font-black uppercase ${
-                  isDark ? 'text-zinc-400 drop-shadow' : 'text-zinc-500'
-                }`}>
+                <span className="text-[10px] font-mono tracking-widest font-black uppercase text-zinc-500 dark:text-zinc-400 drop-shadow">
                   {slide.tagline}
                 </span>
-                <h3 className={`text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-none uppercase break-words ${
-                  isDark ? 'text-white drop-shadow' : 'text-zinc-950'
-                }`}>
+                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-none uppercase break-words text-zinc-950 dark:text-white drop-shadow">
                   {slide.title}
                 </h3>
               </div>
 
               {/* Bottom Info Block */}
               <div className="relative z-10 space-y-6">
-                <p className={`text-xs sm:text-sm leading-relaxed font-normal max-w-sm ${
-                  isDark ? 'text-zinc-300' : 'text-zinc-600'
-                }`}>
+                <p className="text-xs sm:text-sm leading-relaxed font-normal max-w-sm text-zinc-600 dark:text-zinc-300">
                   {slide.description}
                 </p>
 
@@ -269,18 +245,12 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
                       const el = document.getElementById('marketplace-grid-anchor');
                       el?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className={`flex-1 sm:flex-none flex items-center justify-center gap-2 font-bold px-6 py-3.5 rounded-xl text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md ${
-                      isDark 
-                        ? 'bg-white text-zinc-950 hover:bg-zinc-105 shadow-black/10' 
-                        : 'bg-zinc-950 text-white hover:bg-zinc-800 shadow-zinc-200/50'
-                    }`}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 font-bold px-6 py-3.5 rounded-xl text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-105 shadow-zinc-200/50 dark:shadow-black/10"
                   >
                     <span>{slide.ctaText}</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
-                  <div className={`hidden sm:flex items-center gap-1 text-[10px] font-mono tracking-wider ${
-                    isDark ? 'text-zinc-500' : 'text-zinc-400'
-                  }`}>
+                  <div className="hidden sm:flex items-center gap-1 text-[10px] font-mono tracking-wider text-zinc-400 dark:text-zinc-500">
                     <ShieldCheck className="w-4 h-4 text-green-500" />
                     SECURE ESCROWED
                   </div>
@@ -302,17 +272,11 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
                   exit={{ opacity: 0, scale: 0.98, y: -8 }}
                   transition={{ duration: 0.2, delay: idx * 0.03 }}
                   onClick={() => onSelectProduct(product)}
-                  className={`flex items-center justify-between gap-3 p-2.5 rounded-xl transition-all border cursor-pointer group ${
-                    isDark 
-                      ? 'border-zinc-900/10 bg-gradient-to-br from-zinc-900/35 to-zinc-950/50 hover:border-zinc-800 hover:from-zinc-900 hover:to-zinc-950 shadow-lg shadow-black/10' 
-                      : 'border-zinc-100/20 bg-gradient-to-br from-zinc-50/50 to-zinc-100/30 hover:border-zinc-250 hover:from-white hover:to-zinc-50 shadow-sm'
-                  }`}
+                  className="flex items-center justify-between gap-3 p-2.5 rounded-xl transition-all border cursor-pointer group border-zinc-100/20 dark:border-zinc-900/10 bg-gradient-to-br from-zinc-50/50 dark:from-zinc-900/35 to-zinc-100/30 dark:to-zinc-950/50 hover:border-zinc-250 dark:hover:border-zinc-800 hover:from-white dark:hover:from-zinc-900 hover:to-zinc-50 dark:hover:to-zinc-950 shadow-sm dark:shadow-lg dark:shadow-black/10"
                 >
                   {/* Left: Thumbnail & Title + Shuffled Category */}
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className={`w-12 h-9 sm:w-14 sm:h-11 rounded overflow-hidden shrink-0 relative border ${
-                      isDark ? 'bg-zinc-900 border-zinc-800/40' : 'bg-zinc-200 border-zinc-200/20'
-                    }`}>
+                    <div className="w-12 h-9 sm:w-14 sm:h-11 rounded overflow-hidden shrink-0 relative border bg-zinc-200 dark:bg-zinc-900 border-zinc-200/20 dark:border-zinc-800/40">
                       <img 
                         referrerPolicy="no-referrer" 
                         src={product.image} 
@@ -321,13 +285,11 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
                       />
                     </div>
                     <div className="min-w-0 space-y-0.5">
-                      <h4 className={`font-bold text-xs truncate leading-snug ${isDark ? 'text-zinc-200 group-hover:text-amber-550' : 'text-zinc-800 group-hover:text-zinc-950'}`}>
+                      <h4 className="font-bold text-xs truncate leading-snug text-zinc-800 dark:text-zinc-200  ">
                         {product.brand}
                       </h4>
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className={`font-mono text-[8px] tracking-wider uppercase ${
-                          isDark ? 'text-zinc-500' : 'text-zinc-400'
-                        }`}>
+                        <span className="font-mono text-[8px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">
                           {product.category}
                         </span>
                         {product.inventoryCount <= 40 && (
@@ -343,16 +305,14 @@ export const FeaturedDealsShowcase = ({ products, onSelectProduct, isDark }: Fea
                   <div className="flex items-center gap-2 shrink-0">
                     {/* Discount percentage tag - neutral themed */}
                     {product.discount > 0 && (
-                      <span className={`font-mono font-bold text-[9px] px-1 py-0.5 rounded ${
-                        isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-zinc-150 text-zinc-700'
-                      }`}>
+                      <span className="font-mono font-bold text-[9px] px-1 py-0.5 rounded bg-zinc-150 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
                         -{product.discount}%
                       </span>
                     )}
 
                     {/* Price structure - completely green-free */}
                     <div className="text-right">
-                      <p className={`text-xs sm:text-sm font-display font-black leading-none ${isDark ? 'text-white' : 'text-zinc-950'}`}>
+                      <p className="text-xs sm:text-sm font-display font-black leading-none text-zinc-950 dark:text-white">
                         ${product.finalPrice.toFixed(2)}
                       </p>
                       {product.discount > 0 && (

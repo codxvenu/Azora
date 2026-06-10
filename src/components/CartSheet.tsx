@@ -14,9 +14,9 @@ interface CartSheetProps {
   onCheckout: () => void;
 }
 
-export function CartSheet({ items, isOpen, onClose, onRemove, onCheckout }: CartSheetProps) {
-  const subtotal = items.reduce((acc, item) => acc + item.price, 0);
-  const discount = items.reduce((acc, item) => acc + (item.originalPrice - item.price), 0);
+export function CartSheet({ items=[], isOpen, onClose, onRemove, onCheckout }: CartSheetProps) {
+  const subtotal = items?.reduce((acc, item) => acc + item.price, 0);
+  const discount = items?.reduce((acc, item) => acc + (item.originalPrice - item.price), 0);
   const total = subtotal;
 
   const hasRegionWarning = items.some(item => item.region !== 'Global');

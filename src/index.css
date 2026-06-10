@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
-
+@custom-variant dark (&:where(.dark, .dark *));
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", sans-serif;
@@ -14,7 +14,9 @@
   --color-apple-gray: #f5f5f7;
   --color-apple-green: #34c759;
 }
-
+/* * {
+  transition: none !important;
+} */
 @layer utilities {
   .glass {
     @apply bg-white/70 backdrop-blur-xl border border-white/20;
@@ -36,7 +38,20 @@
     scrollbar-width: none;
   }
 }
-
+.scroll-thin{
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+  padding-right: 16px; /* Adjust as needed */
+}
+.dark::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+  }
 body {
   @apply antialiased text-zinc-900 bg-[#FAF9F6];
+  
+}
+
+html{
+  scrollbar-width: thin;
+  scrollbar-color: #333 #0a0a0c;
 }
