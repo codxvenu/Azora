@@ -63,10 +63,11 @@ const AVAILABLE_COUPONS = {
     setUser((prev)=>({...prev,cart : prev.cart.map(itm=>itm.productId._id == id ? {...itm,quantity : itm.quantity - 1} : itm)}));
   }
    const handleOrder = async () => {
-        if(user?.balance - finalTotal < 0) return showNotification("Low Balance","info")
-        setIsProcessing(true)
+        if(user?.balance - finalTotal < 0) return showNotification("Low Balance","info");
+        setIsProcessing(true);
         const ids = user?.cart?.map(o=>o.productId._id);
-        const order = await api.order.add(JSON.stringify({productIds : ids , finalTotal}));
+        const orderKeys = user?.cart?.map(o=>o.productId.demo);
+        const order = await api.order.add(JSON.stringify({productIds : ids , finalTotal,orderKeys}));
         if(!order?.status) return
         setUser((prev)=>({...prev,balance : prev.balance - finalTotal,cart : []}))
         setIsProcessing(false);

@@ -1,37 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, CreditCard, Bitcoin, ShieldCheck, Copy, Check } from 'lucide-react';
-
+import useApi from '../lib/useFetch';
 
 export const DepositModal = ({onClose, addDeposit }) => {
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState(null);
-  const [trxid, setTrxid] = useState("usdt");
+  const [trxid, setTrxid] = useState("");
   const [copied, setCopied] = useState(false);
-
+  const api = useApi()
   const [payConfig, setPayConfig] = useState({
-    razorpay_title: 'Razorpay / Card',
-    razorpay_enabled: true,
     crypto_title: 'Crypto (USDT/BTC)',
     crypto_enabled: true,
-    crypto_address: {
-      btc : 'TTRxX9s7YhdDk9PqmzL28sLdkWqq893kS',
-      usdt: 'TTRxX9s7YhdDk9PqmzL28sLdkWqq893kS'
-    },
-    stripe_title: 'Stripe / Global Card',
-    stripe_enabled: true
+    crypto_address: [],
   });
 
+  const handlePaymentConfig = async() =>{
+    const config = await api.wallet.configList();
+    const wallet = config.wallet.map((w)=>{
+      const currW = w.address.split("\n");
+      if(currW.length > 1 && !!currW.at(-1)){
+        return {...w,address : currW}
+      }else{
+        return w
+      }
+    });
+    setPayConfig((prev)=>({...prev,crypto_address : wallet}));
+    setTrxid(getRandomMethod(wallet[0].address));
+  }
+  useEffect(()=>{
+    handlePaymentConfig()
+  },[])
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(payConfig.crypto_address);
+    navigator.clipboard.writeText(trxid);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
+  const getRandomMethod = (address)=>{
+    if(!Array.isArray(address)) return address
+    return address[Math.floor(Math.random()*address.length)]
+  }
   const paymentMethods = [
     { id: 'crypto', name: payConfig.crypto_title, icon: Bitcoin, enabled: payConfig.crypto_enabled },
-    { id: 'card', name: payConfig.stripe_title, icon: ShieldCheck, enabled: payConfig.stripe_enabled }
+    // { id: 'card', name: payConfig.stripe_title, icon: ShieldCheck, enabled: payConfig.stripe_enabled }
   ].filter(m => m.enabled !== false);
 
   return (
@@ -112,13 +124,16 @@ export const DepositModal = ({onClose, addDeposit }) => {
                 </p>
                 <div className="flex items-center justify-between gap-3 bg-zinc-950/20 dark:bg-zinc-950/60 p-3 rounded-xl border border-zinc-200/50 dark:border-zinc-900">
                   <select className="bg-transparent text-sm font-mono font-bold tracking-wider text-zinc-600 dark:text-zinc-400 w-full outline-0 " onChange={(e)=>setTrxid(e.target.value)}>
-                    <option value="USDT">USDT</option>
-                    <option value="BTC">BTC</option>
+                   
+                   {payConfig["crypto_address"]?.map((p)=>(
+                     <option value={getRandomMethod(p.address)}>{p.network}</option>
+            )) 
+                   }
                   </select>
                 </div>
                 <div className="flex items-center justify-between gap-3 bg-zinc-950/20 dark:bg-zinc-950/60 p-3 rounded-xl border border-zinc-200/50 dark:border-zinc-900">
                   <span className="font-mono text-xs break-all select-all text-zinc-650 dark:text-zinc-300">
-                    {payConfig.crypto_address[trxid == 'btc' ? "btc" : 'usdt']}
+                    {trxid}
                   </span>
                   <button
                     onClick={handleCopy}

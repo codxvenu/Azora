@@ -49,6 +49,7 @@ import { useNotification } from "./useNotification";
     wallet : {
       add : (body) => getter("http://localhost:3001/api/wallet/add", {method : "POST",body}), 
       list : () => getter("http://localhost:3001/api/wallet/list"),
+      configList : () => getter("http://localhost:3001/api/wallet/list/config"),
     },
     order : {
         list : () => getter("http://localhost:3001/api/order/list"),
@@ -63,6 +64,7 @@ import { useNotification } from "./useNotification";
       updatePaymentMethod : (body)=> getter("http://localhost:3001/api/admin/updatePaymentMethod", {method : "POST",body}), 
       updateDeposit : (body)=> getter("http://localhost:3001/api/admin/updateDeposit", {method : "POST",body}), 
       addProduct : (body)=> getter("http://localhost:3001/api/admin/addProduct", {method : "POST",body}), 
+      deleteProduct : (id) => getter(`http://localhost:3001/api/admin/delete/product/${id}`,{method : "DELETE"}),
     }
   };
 };

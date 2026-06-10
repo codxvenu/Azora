@@ -216,6 +216,10 @@ export const AdminPanel = ({ onBack, isDark }) => {
     e.preventDefault();
      await api.admin.updatePaymentMethod(JSON.stringify({paymentsConfig}));
   };
+  const handleDeleteProduct = async (id) => {
+     await api.admin.deleteProduct(id);
+     setGiftCards((prev)=>prev.filter(g=>g._id !== id))
+  };
 
   // ==========================================
   // ORIGINAL SUBMISSION AUDIT
@@ -256,7 +260,10 @@ export const AdminPanel = ({ onBack, isDark }) => {
   //     handleFirestoreError(err, OperationType.UPDATE, `giftCards/${cardId}`);
   //   }
   // };
-
+  useEffect(()=>{
+    if(!editingCardId) return
+    setNewCard(giftCards.find(g=>g._id === editingCardId));
+  },[editingCardId])
   // Filter lists
   const filteredUsers = users?.filter(u => 
     u?.email?.toLowerCase().includes(userQuery?.toLowerCase()) || 
@@ -430,10 +437,10 @@ export const AdminPanel = ({ onBack, isDark }) => {
           <div className="lg:col-span-1 space-y-6">
             <div className={`p-6 rounded-2xl border shadow-xl bg-white dark:bg-zinc-950 border-zinc-100 dark:border-zinc-900/50`}>
               <h3 className="text-xl font-display font-black uppercase tracking-tight flex items-center gap-2 text-zinc-900 dark:text-white">
-                <Plus className="w-5 h-5 text-emerald-500" /> New Product Card
+                <Plus className="w-5 h-5 text-emerald-500" /> {editingCardId ?  "Product Card" : "New Product Card"}
               </h3>
               <p className="text-xs text-zinc-400 mt-1 pb-4 border-b border-zinc-100 dark:border-zinc-800/40">
-                Register a new digital brand or voucher package.
+                {!editingCardId ? "Register a new digital brand or voucher package." : "Update digital brand or voucher package."}
               </p>
 
               <form className="space-y-4 pt-4">
@@ -516,113 +523,11 @@ export const AdminPanel = ({ onBack, isDark }) => {
                   className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/10"
                   id="btn-admin-add-product"
                 >
-                  <Plus className="w-4 h-4" /> Create Product Listing
+                  <Plus className="w-4 h-4" /> {editingCardId  ? "Update Product" : "Create Product Listing"}
                 </button>
               </form>
             </div>
-             {/* KEY GENERATOR DRAWER FOR ACTIVE SELECTION */}
-            {editingCardId && (
-              <div className="p-6 rounded-2xl border text-left space-y-6 shadow-2xl animate-slideDown bg-emerald-50/20 dark:bg-zinc-950 border-emerald-500/20 dark:border-emerald-500/30">
-                <div className="flex justify-between items-center pb-4 border-b border-zinc-100 dark:border-zinc-800">
-                  <div>
-                    <h4 className="font-display font-black text-xl text-zinc-900 dark:text-white uppercase">
-                      Code Management Room
-                    </h4>
-                    <p className="text-xs text-zinc-400 mt-1">
-                      Generating codes for product ID: <span className="font-mono text-emerald-500">{giftCards.find(c => c.id === editingCardId)?.brand}</span>
-                    </p>
-                  </div>
-                  <button 
-                    onClick={() => setEditingCardId(null)}
-                    className="p-1 rounded-lg border border-zinc-100 dark:border-zinc-800 text-zinc-400 hover:text-zinc-650"
-                  >
-                    <XCircle className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {/* AUTO-GENERATOR CONTROLS */}
-                <div className="p-5 rounded-xl border space-y-4 bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-emerald-500" />
-                    <p className="font-bold text-xs uppercase tracking-wider font-mono">Format Stock Keys Auto-Generator</p>
-                  </div>
-
-                  <div className="grid gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Code Format / Layout</label>
-                      <input 
-                        type="text" 
-                        value={genFormat}
-                        onChange={(e) => setGenFormat(e.target.value)}
-                        placeholder="XXXX-XXXX-XXXX"
-                        className="w-full p-2 rounded text-xs outline-none border font-mono bg-zinc-50 dark:bg-zinc-950 border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-white"
-                      />
-                      <p className="text-[8px] text-zinc-500">X = Alpha/Num, # = Digit, - = dash</p>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Optional Prefix</label>
-                      <input 
-                        type="text" 
-                        value={genPrefix}
-                        onChange={(e) => setGenPrefix(e.target.value)}
-                        placeholder="e.g. AMZN"
-                        className="w-full p-2 rounded text-xs outline-none border font-mono uppercase bg-zinc-50 dark:bg-zinc-950 border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-white"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Quantity to Inject</label>
-                      <input 
-                        type="number" 
-                        value={genQuantity}
-                        onChange={(e) => setGenQuantity(e.target.value)}
-                        placeholder="10"
-                        className="w-full p-2 rounded text-xs outline-none border font-mono bg-zinc-50 dark:bg-zinc-950 border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={executeCodeGenerator}
-                    className="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-2"
-                  >
-                    <Plus className="w-4 h-4" /> Generate Batch Preview
-                  </button>
-                </div>
-
-                {/* TEXT AREA CODES PREVIEW */}
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-500 flex justify-between">
-                    <span>Keys Registry List (one per line)</span>
-                    <span className="text-emerald-500">{bulkCodeInput.split('\n').filter(Boolean).length} keys currently in pool</span>
-                  </label>
-                  <textarea
-                    value={bulkCodeInput}
-                    onChange={(e) => setBulkCodeInput(e.target.value)}
-                    placeholder="Paste your activation keys or write them here..."
-                    rows={8}
-                    className="w-full p-4 rounded-xl text-xs outline-none border font-mono bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-zinc-300 focus:border-zinc-200 dark:focus:border-zinc-805"
-                  />
-                </div>
-
-                <div className="flex gap-3 justify-end pt-2">
-                  <button 
-                    onClick={() => setEditingCardId(null)}
-                    className="px-4 py-2 rounded-lg text-xs font-bold font-mono uppercase border bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-100 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    // onClick={saveCodesToDatabase}
-                    className="px-6 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-mono uppercase tracking-wider shadow-md flex items-center gap-1.5"
-                    id="btn-save-key-pool"
-                  >
-                    <Save className="w-4 h-4" /> Save Key Pool
-                  </button>
-                </div>
-              </div>
-            )}
+    
           </div>
 
           {/* Product Listing & Active Stock Control (Right Columns) */}
@@ -664,15 +569,15 @@ export const AdminPanel = ({ onBack, isDark }) => {
                         <p className="text-xs font-mono font-semibold text-emerald-500 mt-1">${card.finalPrice.toFixed(2)} <span className="text-[10px] text-zinc-400 font-normal line-through">${card.realPrice.toFixed(2)}</span></p>
                       </div>
                       <div className="flex gap-1">
-                        <button 
-                          onClick={() => setEditingCardId(isSelected ? null : card.id)}
+                        <button
+                          onClick={() => setEditingCardId(isSelected ? null : card._id)}
                           className="p-2 rounded-lg border transition-colors bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border-zinc-100 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300"
                           title="Generate or edit codes"
                         >
                           <Key className="w-3.5 h-3.5" />
                         </button>
                         <button 
-                          onClick={() => handleDeleteProduct(card.id, card.brand)}
+                          onClick={() => handleDeleteProduct(card._id)}
                           className="p-2 rounded-lg border hover:bg-red-500/15 text-red-500 transition-colors bg-zinc-50 dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800"
                           title="Delete card"
                         >
@@ -837,7 +742,7 @@ export const AdminPanel = ({ onBack, isDark }) => {
                 </div>
                
               </div>
-              {paymentsConfig.map((p)=>(
+              {paymentsConfig?.map((p)=>(
                 <div className="grid grid-cols-1 gap-3 pl-10">
                   <div className="space-y-1">
                     <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">{p?.network}</label>
@@ -845,13 +750,13 @@ export const AdminPanel = ({ onBack, isDark }) => {
                   </div>
                   <div className="space-y-1">
                     {/* <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Network Wallet Address (USDT TRC20/ERC20/BTC)</label> */}
-                    <input 
+                    <textarea 
                       type="text" 
-                      value={p.address}
+                      value={Array.isArray(p?.address) ? p?.address.join("\n") : p?.address}
                       onChange={(e) => setPaymentsConfig(prev => prev.map((m)=>m.network === p.network ? {...m , address : e.target.value } : m))}
-                      className={`w-full p-2.5 rounded-xl text-xs font-mono outline-none border ${
-                        isDark ? 'bg-zinc-900 border-zinc-800 text-emerald-400' : 'bg-zinc-50 border-zinc-100 text-emerald-700'
-                      }`}
+                      className={`w-full p-2.5 rounded-xl text-xs font-mono outline-none border 
+                        dark:bg-zinc-900 dark:border-zinc-800 dark:text-emerald-400 bg-zinc-50 border-zinc-100 text-emerald-700
+                      `}
                     />
                   </div>
                 </div>
