@@ -12,8 +12,8 @@ import { Link } from 'react-router-dom';
 import useApi from '@/src/lib/useFetch';
 import { Auth } from '@/Utility/AuthContext';
   import { useNavigate } from "react-router-dom";
-
-
+import { GoogleLogin, googleLogout } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 const GoogleIcon = () => (
   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -23,10 +23,22 @@ const GoogleIcon = () => (
   </svg>
 );
 
-const Login = ({isLoading=false,handleGoogleLogin}) => {
+const Login = () => {
   const [Form,setForm] = useState({email : "",password : ""});
   const api = useApi();
   const { setUser } = useContext(Auth);
+  const [loading,setLoading]= useState(false)
+  const navigate = useNavigate()
+   const handleSuccess = async(credentialResponse) => {
+    setLoading(true)
+    const token = credentialResponse.credential;
+    const data = await api.auth.Glogin(JSON.stringify({token}))
+    setUser(data.user);
+    setLoading(false)
+    if(data?.status) {navigate("/")}
+  };
+
+
 const navigator = useNavigate();
    const handleLogin = async()=>{
       const data = await api.auth.login(JSON.stringify({user : Form}));
@@ -104,11 +116,11 @@ const navigator = useNavigate();
    
                <button 
                  type="button"
-                 disabled={isLoading}
+                 disabled={loading}
                  onClick={()=>handleLogin()}
                  className="w-full py-3.5 mt-2 rounded-xl font-mono text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 duration-350 transition-all bg-black text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-900 dark:hover:bg-zinc-200 shadow-md shadow-black/10 dark:shadow-lg dark:shadow-white/5"
                >
-                 Log In <ArrowRight className="w-4 h-4" />
+                 {!!loading ? "verifying" : "Log In"} <ArrowRight className="w-4 h-4" />
                </button>
    
                {/* Google Authentication Row */}
@@ -118,15 +130,19 @@ const navigator = useNavigate();
                  <span className="flex-grow border-t border-zinc-100 dark:border-zinc-900"></span>
                </div>
    
-               <button 
+               {/* <button 
                  type="button"
                  onClick={handleGoogleLogin}
                  disabled={isLoading}
                  className={`w-full py-3.5 rounded-xl text-xs font-bold font-mono uppercase flex items-center justify-center gap-2 transition-all duration-300 border bg-white border-zinc-200 text-zinc-900 hover:bg-zinc-50 hover:border-zinc-300 shadow-sm dark:bg-zinc-900/50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:text-white dark:hover:bg-zinc-900 dark:shadow-md`}
                >
                  <GoogleIcon /> Sign In with Google
-               </button>
-   
+               </button> */}
+    <GoogleLogin
+          onSuccess={handleSuccess}
+          // onError={handleFailure}
+          useOneTap // Optional: Enables Google One Tap prompt
+        />
                <div className="text-center pt-4 border-t border-zinc-100 dark:border-zinc-900">
                  <p className="text-xs text-zinc-500">
                    Don't have an identity yet?{' '}

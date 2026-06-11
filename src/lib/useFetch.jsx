@@ -27,6 +27,7 @@ import { useNotification } from "./useNotification";
   return {
     auth: {
       login: (body) => getter("http://localhost:3001/api/auth/login", {method : "POST",body}),
+      Glogin: (body) => getter("http://localhost:3001/api/auth/Glogin", {method : "POST",body}),
       register: (body) => getter("http://localhost:3001/api/auth/register", {method : "POST",body}),
       me: () => getter("http://localhost:3001/api/auth/me"),
       logout: () => getter("http://localhost:3001/api/auth/logout"),
