@@ -9,8 +9,11 @@ import { FeaturedDealsShowcase } from './components/FeaturedDealsShowcase';
 import { EditorialHowItWorks } from './components/EditorialHowItWorks';
 import { Theme } from '@/Utility/ThemeContext';
 import useApi from './lib/useFetch';
+import { useNavigate } from 'react-router-dom';
 const Home = ()=> {
   const api = useApi()
+  const navigation = useNavigate();
+
   useEffect(()=>{
     const GetItems = async() =>{
       const data = await api.product.list();
@@ -18,6 +21,12 @@ const Home = ()=> {
     }
     GetItems();
   },[])
+  useEffect(() => {
+  if (location.hash) {
+    const el = document.querySelector(location.hash);
+    el?.scrollIntoView({ behavior: 'smooth' });
+  }
+}, [location]);
   const [items,setItems] = useState([])
   return (
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -44,15 +53,15 @@ const Home = ()=> {
               ) : ( */}
                 <>
                   {/* Hero */}
-                 <HeroBanner/>
 
+                 <HeroBanner/>
                   {/* Marketplace */}
                   <div id="marketplace" className="space-y-16">
                     {/* Marketplace Anchor */}
                     <div id="marketplace-grid-anchor" className="scroll-mt-24" />
 
                     {/* Swapped Section 1: Trending Products Section (Shown first) */}
-                    <div className="space-y-8 text-left">
+                    <div id='trending' className="space-y-8 text-left">
                       <div>
                         <h2 className="text-3xl font-display font-medium tracking-tight">Trending Products</h2>
                         <p className={`text-xs text-stone-500 mt-1 dark:text-zinc-400`}>Highly requested digital software and activation kits updated live.</p>

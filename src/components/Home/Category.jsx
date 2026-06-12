@@ -9,6 +9,7 @@ const Category = ({giftCards}) => {
                               <h2 className="text-3xl font-display font-medium tracking-tight">Explore Categories</h2>
                               <p className={`text-xs dark:text-zinc-500 text-stone-500 mt-1`}>Select a category to locate and purchase electronic licenses and key codes instantly.</p>
                             </div>
+                           <Link to={"/category/all"}>
                             <button
                               onClick={() => {
                                 // setActiveDetailCategory('All');
@@ -18,6 +19,7 @@ const Category = ({giftCards}) => {
                             >
                               Browse All
                             </button>
+                                </Link>
                           </div>
     
                           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pt-2">

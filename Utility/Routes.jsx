@@ -3,9 +3,10 @@ import App from "@/src/App";
 import Home from "@/src/Home";
 import { lazy } from "react";
 import { AuthView } from "@/src/components/AuthView";
-
+import {Privacy} from "@/src/components/Privacy"
 import { CartSheet } from "@/src/components/CartSheet";
 import { AdminPanel } from "@/src/components/AdminPanel";
+import { Ticket } from "@/src/components/Ticket";
 
 const ProductDetailView = lazy(()=> import("@/src/components/ProductDetailView"));
 const CategoryDetailView = lazy(()=> import("@/src/components/CategoryDetailView"));
@@ -58,6 +59,15 @@ const appRouter = createBrowserRouter([
         path: "/admin",
         element: <AdminPanel />,
       },
+      {
+        path: "/legal/:type",
+        element: <Privacy />,
+      },
+      {
+        path: "/support",
+        element: <Ticket />,
+      },
+      
     ],
   },
   {

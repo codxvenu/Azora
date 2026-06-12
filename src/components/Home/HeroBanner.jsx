@@ -16,6 +16,7 @@ const HeroBanner = () => {
                       <div className="absolute inset-0 bg-gradient-to-l from-zinc-900 to-transparent z-10" />
                       <img src="https://picsum.photos/seed/giftcard/800/800" alt="Hero" className="w-full h-full object-cover" />
                     </div>
+                    <span id='trend'></span>
                   </div>
   )
 }

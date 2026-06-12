@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Footer = ({ setCurrentView }) => {
   return (
@@ -21,12 +22,14 @@ const Footer = ({ setCurrentView }) => {
         </h4>
         <ul className="space-y-2 text-sm text-zinc-500 dark:text-zinc-400">
           <li>
+            <Link to={"/category/all"}>
             <button
               onClick={() => setCurrentView("browse")}
               className="transition-colors hover:text-black dark:hover:text-white"
-            >
+              >
               Browse Cards
             </button>
+              </Link>
           </li>
           <li>
             <button
@@ -36,11 +39,13 @@ const Footer = ({ setCurrentView }) => {
               Sell Codes
             </button>
           </li>
+          <Link to={{pathname : "/", hash : "#trend"}}>
           <li>
             <button className="transition-colors hover:text-black dark:hover:text-white">
               Trending Deals
             </button>
           </li>
+          </Link>
         </ul>
       </div>
 
@@ -50,9 +55,11 @@ const Footer = ({ setCurrentView }) => {
         </h4>
         <ul className="space-y-2 text-sm text-zinc-500 dark:text-zinc-400">
           <li>
+             <Link to={"/support"}>
             <button className="transition-colors hover:text-black dark:hover:text-white">
               Help Center
             </button>
+             </Link>
           </li>
           <li>
             <button className="transition-colors hover:text-black dark:hover:text-white">
@@ -73,19 +80,26 @@ const Footer = ({ setCurrentView }) => {
         </h4>
         <ul className="space-y-2 text-sm text-zinc-500 dark:text-zinc-400">
           <li>
+            <Link to={"/legal/privacy"}>
             <button className="transition-colors hover:text-black dark:hover:text-white">
               Privacy Policy
             </button>
+            </Link>
           </li>
+
           <li>
+            <Link to={"/legal/terms"}>
             <button className="transition-colors hover:text-black dark:hover:text-white">
               Terms of Service
             </button>
+            </Link>
           </li>
           <li>
+            <Link to={"/legal/refund"}>
             <button className="transition-colors hover:text-black dark:hover:text-white">
               Refund Policy
             </button>
+            </Link>
           </li>
         </ul>
       </div>
@@ -94,17 +108,7 @@ const Footer = ({ setCurrentView }) => {
     <div className="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium uppercase tracking-widest border-zinc-100 text-zinc-400 dark:border-zinc-900 dark:text-zinc-500">
       <p>© 2024 AURA DIGITAL MARKETPLACE. ALL RIGHTS RESERVED.</p>
 
-      <div className="flex gap-6 text-zinc-400 dark:text-zinc-500">
-        <button className="transition-colors hover:text-black dark:hover:text-white">
-          Twitter
-        </button>
-        <button className="transition-colors hover:text-black dark:hover:text-white">
-          Discord
-        </button>
-        <button className="transition-colors hover:text-black dark:hover:text-white">
-          Instagram
-        </button>
-      </div>
+    
     </div>
   </div>
 </footer>
