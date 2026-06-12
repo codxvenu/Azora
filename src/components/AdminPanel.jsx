@@ -9,6 +9,8 @@ import {
 import { useNotification } from '../lib/useNotification';
 import useApi from '../lib/useFetch';
 import { Auth } from '@/Utility/AuthContext';
+import {Link} from "react-router-dom"
+
 
 export const AdminPanel = ({ onBack, isDark }) => {
   const {user} = useContext(Auth);
@@ -646,6 +648,7 @@ export const AdminPanel = ({ onBack, isDark }) => {
                     <th className="px-6 py-4 text-[10px] font-mono tracking-wider font-bold uppercase text-zinc-400 dark:text-zinc-500">Method</th>
                     <th className="px-6 py-4 text-[10px] font-mono tracking-wider font-bold uppercase text-zinc-400 dark:text-zinc-500">Amount Request</th>
                     <th className="px-6 py-4 text-[10px] font-mono tracking-wider font-bold uppercase text-zinc-400 dark:text-zinc-500">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-mono tracking-wider font-bold uppercase text-zinc-400 dark:text-zinc-500">ScreenShot</th>
                     <th className="px-6 py-4 text-[10px] font-mono tracking-wider font-bold uppercase text-zinc-400 dark:text-zinc-500 text-right">Review Hooks</th>
                   </tr>
                 </thead>
@@ -677,6 +680,11 @@ export const AdminPanel = ({ onBack, isDark }) => {
                         }`}>
                           {tx.status}
                         </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <Link to={`/${tx?.fileId}`}>
+                         <button className='px-5 py-1 dark:bg-gray-300 bg-black text-white dark:text-black text-sm rounded-md'>file</button>
+                        </Link>
                       </td>
                       <td className="px-6 py-5 text-right space-x-2">
                         {tx.status === 'pending' ? (

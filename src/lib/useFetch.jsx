@@ -56,6 +56,9 @@ import { useNotification } from "./useNotification";
         list : () => getter("/api/order/list"),
         add : (body) => getter("/api/order/add", {method : "POST",body}),
       },
+    file : {
+        upload : (body) => getter("/api/file/upload", {method : "POST",body,headers : {}}),
+      },
     ticket : {
         list : () => getter("/api/ticket/list"),
         add : (body) => getter("/api/ticket/add", {method : "POST",body}),

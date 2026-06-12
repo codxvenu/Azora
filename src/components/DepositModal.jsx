@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, CreditCard, Bitcoin, ShieldCheck, Copy, Check } from 'lucide-react';
 import useApi from '../lib/useFetch';
 
-export const DepositModal = ({onClose, addDeposit }) => {
+export const DepositModal = ({onClose, addDeposit,setFile }) => {
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState(null);
   const [trxid, setTrxid] = useState("");
@@ -132,6 +132,7 @@ export const DepositModal = ({onClose, addDeposit }) => {
                   </select>
                 </div>
                 <div className="flex items-center justify-between gap-3 bg-zinc-950/20 dark:bg-zinc-950/60 p-3 rounded-xl border border-zinc-200/50 dark:border-zinc-900">
+                
                   <span className="font-mono text-xs break-all select-all text-zinc-650 dark:text-zinc-300">
                     {trxid}
                   </span>
@@ -142,6 +143,10 @@ export const DepositModal = ({onClose, addDeposit }) => {
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
+                </div>
+                <div className="flex items-center justify-between gap-3 bg-zinc-950/20 dark:bg-zinc-950/60 p-3 rounded-xl border border-zinc-200/50 dark:border-zinc-900">
+                
+                 <input type='file' onChange={(e)=>setFile(e.target.files)}/>
                 </div>
                 <p className="text-[10px] text-zinc-500">
                   Please send equivalent amount to this address, then click proceed. The administrator will verify the hash block.
