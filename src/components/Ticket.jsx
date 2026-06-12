@@ -19,7 +19,7 @@ import {
 import { Auth } from '@/Utility/AuthContext';
 import useApi from '../lib/useFetch';
 import { useNavigate } from 'react-router-dom';
-export const Ticket = ({ profile, onBack }) => {
+ const Ticket = ({ profile, onBack }) => {
   const { showNotification } = useNotification();
   const {user} = useContext(Auth);
   const navigation = useNavigate()
@@ -579,3 +579,4 @@ setIsSubmitting(false);
     </div>
   );
 };
+export default Ticket;

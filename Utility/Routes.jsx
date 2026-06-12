@@ -6,7 +6,7 @@ import { AuthView } from "@/src/components/AuthView";
 import {Privacy} from "@/src/components/Privacy"
 import { CartSheet } from "@/src/components/CartSheet";
 import { AdminPanel } from "@/src/components/AdminPanel";
-import { Ticket } from "@/src/components/Ticket";
+import NotFoundView from "@/src/components/ErrorMode";
 
 const ProductDetailView = lazy(()=> import("@/src/components/ProductDetailView"));
 const CategoryDetailView = lazy(()=> import("@/src/components/CategoryDetailView"));
@@ -14,6 +14,7 @@ const OrdersView = lazy(()=> import("@/src/components/OrdersView"));
 const CheckoutView = lazy(()=> import("@/src/components/CheckoutView"));
 const WalletView = lazy(()=> import("@/src/components/WalletView"));
 const ProfileView = lazy(()=> import("@/src/components/ProfileView"));
+const Ticket = lazy(()=> import("@/src/components/Ticket"));
 
 const Login = lazy(() => import("@/src/components/Auth/Login"));
 const Register = lazy(() => import("@/src/components/Auth/Register"));
@@ -68,6 +69,7 @@ const appRouter = createBrowserRouter([
         element: <Ticket />,
       },
       
+      
     ],
   },
   {
@@ -99,6 +101,10 @@ const appRouter = createBrowserRouter([
         element: <Twofa />,
       },
       ]},
+      {
+        path: "*",
+        element: <NotFoundView />,
+      },
 ]);
 
 export default appRouter;

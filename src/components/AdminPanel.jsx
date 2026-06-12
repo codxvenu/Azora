@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { format } from 'date-fns';
 import { 
   Users, Layers, Settings2, CreditCard, ChevronRight, CheckCircle, XCircle, 
@@ -8,8 +8,10 @@ import {
 } from 'lucide-react';
 import { useNotification } from '../lib/useNotification';
 import useApi from '../lib/useFetch';
+import { Auth } from '@/Utility/AuthContext';
 
 export const AdminPanel = ({ onBack, isDark }) => {
+  const {user} = useContext(Auth);
   const { showNotification } = useNotification();
   const api = useApi();
   // Tab control
@@ -282,7 +284,7 @@ export const AdminPanel = ({ onBack, isDark }) => {
   const perPage = 10;
   const totalPages = Math.round(filteredProducts?.length / perPage)
   // const pendingDeposits = transactions?.filter(t => t.type === 'deposit' && t.status === 'pending');
-
+  if(user?.role !== "admin") return
   return (
     <div className="max-w-7xl mx-auto space-y-10 my-8">
       
