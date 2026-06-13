@@ -9,7 +9,7 @@ export const GiftCardItem = ({ card, onClick }) => {
   const api = useApi();
    const {setUser} = useContext(Auth)
   const addCart = async(itemId)=>{
-    const data = await api.cart.add(JSON.stringify({itemId}));
+    const data = await api.cart.add(JSON.stringify({itemId,quantity : 1}));
     setUser((prev)=>({...prev,cart : data?.cart ?? prev.cart}));
   }
   return (

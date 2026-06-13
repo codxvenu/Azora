@@ -44,7 +44,8 @@ export const AdminPanel = ({ onBack, isDark }) => {
     realPrice: '',
     discount: '',
     description: '',
-    image: ''
+    image: '',
+    newcategory : ""
   });
 
   // Payment portal config settings
@@ -115,7 +116,7 @@ export const AdminPanel = ({ onBack, isDark }) => {
   // ITEMS LIST / CODES AUTO-GENERATOR
   // ==========================================
   const handleCreateProduct = async (e) => {
-    const { brand, category, realPrice, discount, description, image } = newCard;
+    const { brand, category, realPrice, discount, description, image ,newcategory,inventoryCount} = newCard;
     if (!brand || !realPrice) {
       showNotification('Please fill out at least Brand name and Real Price.', 'error');
       return;
@@ -127,13 +128,13 @@ export const AdminPanel = ({ onBack, isDark }) => {
 
     const cardData = {
       brand,
-      category,
+      category : category === "new" ? newcategory : category,
       realPrice: priceVal,
       discount: discVal,
       finalPrice: finalVal,
       description: description || `Premium ${brand} verification licenses.`,
       image: image || `https://picsum.photos/seed/${encodeURIComponent(brand)}/400/300`,
-      inventoryCount: 0
+      inventoryCount: inventoryCount ?? 0
     };
     await api.admin.addProduct(JSON.stringify({cardData}));
     setGiftCards((prev)=>[cardData,...prev])
@@ -472,6 +473,8 @@ export const AdminPanel = ({ onBack, isDark }) => {
                       <option value="Streaming">Streaming</option>
                       <option value="E-commerce">E-commerce</option>
                       <option value="Software">Software</option>
+                      <option value="new">New</option>
+
                     </select>
                   </div>
                   <div className="space-y-1">
@@ -486,6 +489,17 @@ export const AdminPanel = ({ onBack, isDark }) => {
                   </div>
                 </div>
 
+                {newCard?.category === "new" && <div className="space-y-1">
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">New Category</label>
+                  <input 
+                    type="text" 
+                    value={newCard.newcategory}
+                    onChange={(e) => setNewCard(prev => ({ ...prev, newcategory: e.target.value }))}
+                    className={`w-full p-3 rounded-xl text-xs outline-none border dark:bg-zinc-900 dark:border-zinc-800 dark:text-white bg-zinc-50 border-zinc-100 text-zinc-900
+                    `}
+                  />
+                </div>}
+                <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Discount Percentage (%)</label>
                   <input 
@@ -497,7 +511,18 @@ export const AdminPanel = ({ onBack, isDark }) => {
                     `}
                   />
                 </div>
-
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Inventory Count</label>
+                  <input 
+                    type="number" 
+                    value={newCard.inventoryCount}
+                    onChange={(e) => setNewCard(prev => ({ ...prev, inventoryCount: e.target.value }))}
+                    placeholder="10"
+                    className={`w-full p-3 rounded-xl text-xs outline-none border dark:bg-zinc-900 dark:border-zinc-800 dark:text-white bg-zinc-50 border-zinc-100 text-zinc-900
+                    `}
+                  />
+                </div>
+</div>
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Description</label>
                   <textarea 

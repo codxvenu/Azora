@@ -49,8 +49,8 @@ import { Auth } from "@/Utility/AuthContext";
         
       },[id]);
        const addCart = async()=>{
-        if(!user) return navigate("/auth/login")
-    const data = await api.cart.add(JSON.stringify({itemId : id}));
+        if(!user) return navigate("/auth/login");
+    const data = await api.cart.add(JSON.stringify({itemId : id,quantity}));
     setUser((prev)=>({...prev,cart : data?.cart ?? prev.cart}));
   }
   const card = item?.product;
@@ -119,9 +119,8 @@ import { Auth } from "@/Utility/AuthContext";
  
 
   // Pricing calculations
-  const originalPriceCalculated = selectedAmount / (1 - discountRate);
+  const originalPriceCalculated = selectedAmount;
   const finalPriceCalculated = selectedAmount * quantity;
-  const discountAmount = (originalPriceCalculated - selectedAmount) * quantity;
   const originalTotal = originalPriceCalculated * quantity;
 
   // Render prices formatted nicely
@@ -304,7 +303,7 @@ import { Auth } from "@/Utility/AuthContext";
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="w-full max-w-7xl mx-auto text-zinc-900 dark:text-zinc-100"
+      className="w-full max-w-7xl mx-auto text-zinc-900 dark:text-zinc-100 overflow-x-hidden"
     >
       {/* Top Breadcrumb & Navbar Actions */}
       
@@ -587,7 +586,7 @@ import { Auth } from "@/Utility/AuthContext";
               <div className="flex justify-between">
                 <span>Unit Price</span>
                 <span className="font-mono">
-                  {formatCurrency(selectedAmount / (1 - discountRate))}
+                  {formatCurrency(selectedAmount)}
                 </span>
               </div>
               <div
@@ -595,7 +594,7 @@ import { Auth } from "@/Utility/AuthContext";
               >
                 <span>Voucher Discount ({card.discount}%)</span>
                 <span className="font-mono">
-                  -{formatCurrency(discountAmount)}
+                  -{formatCurrency((selectedAmount*card?.discount)/100)}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -613,7 +612,7 @@ import { Auth } from "@/Utility/AuthContext";
                 <span
                   className={`text-xl font-display font-black font-mono text-zinc-950 dark:text-amber-500`}
                 >
-                  {formatCurrency(finalPriceCalculated)}
+                  {formatCurrency((selectedAmount - (selectedAmount*card?.discount)/100)*quantity)}
                 </span>
               </div>
             </div>

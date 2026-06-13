@@ -71,7 +71,7 @@ const Navbar = () => {
                   </NavButton>
                 )}
                 {user?.role === "admin" && (
-                  <NavButton active={window.location.href.includes("/admin")}>
+                  <NavButton active={window.location.href.includes("/admin")} to={"/admin"}>
                     Admin
                   </NavButton>
                 )}
@@ -194,7 +194,7 @@ const Navbar = () => {
           >
             <div className="flex flex-col gap-6 text-2xl font-display font-bold">
               <Link to={"/"}>
-              <button>
+              <button onClick={()=>setIsMenuOpen(false)}>
                 Browse
               </button>
                 </Link>
@@ -204,9 +204,10 @@ const Navbar = () => {
               </button>
                 </Link> */}
               {user && (
-                <Link to={"/order"}>
+                <Link to={"/orders"}>
 
                 <button
+                onClick={()=>setIsMenuOpen(false)}
                   >
                   Orders
                 </button>
@@ -215,6 +216,7 @@ const Navbar = () => {
               {user?.role === "admin" && (
                 <Link to={"/admin"}>
                 <button
+                onClick={()=>setIsMenuOpen(false)}
                   >
                   Admin
                 </button>
@@ -224,6 +226,7 @@ const Navbar = () => {
               {user && (
                 <Link to={"/wallet"}>
                 <button
+                onClick={()=>setIsMenuOpen(false)}
                   >
                   Wallet (${user?.balance.toFixed(2)})
                 </button>
@@ -233,7 +236,7 @@ const Navbar = () => {
               {user ? (
               
                 <button
-                onClick={() => handleLogout()}
+                onClick={() => {handleLogout();setIsMenuOpen(false)}}
                   className="text-red-600"
                 >
                   Logout
